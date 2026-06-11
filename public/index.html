@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>运营后台</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- 整体两栏布局：左侧导航 + 右侧内容 -->
+  <div class="layout">
+    <!-- 左侧侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-title">运营后台</div>
+      <nav class="nav">
+        <a class="nav-item active" data-page="cards" href="#cards">
+          <span class="nav-icon">🎴</span>卡券管理
+        </a>
+        <a class="nav-item" data-page="goods" href="#goods">
+          <span class="nav-icon">🛍️</span>宠物商店
+        </a>
+        <a class="nav-item" data-page="send-card" href="#send-card">
+          <span class="nav-icon">🃏</span>发卡片
+        </a>
+        <a class="nav-item" data-page="send-gold" href="#send-gold">
+          <span class="nav-icon">🪙</span>发金币
+        </a>
+        <a class="nav-item" data-page="send-exp" href="#send-exp">
+          <span class="nav-icon">⭐</span>发经验
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 右侧主内容区 -->
+    <main class="main">
+      <!-- ========== 卡券管理 ========== -->
+      <section class="page" id="page-cards">
+        <header class="topbar">
+          <h1>卡券管理</h1>
+          <button id="btn-create-card" class="btn btn-primary">+ 新建卡券</button>
+        </header>
+
+        <section class="filter">
+          <div class="filter-item">
+            <label>一级类型</label>
+            <select id="f-first-type">
+              <option value="0">全部</option>
+              <option value="1">宠物装扮</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>二级类型</label>
+            <select id="f-second-type">
+              <option value="0">全部</option>
+              <option value="101">宠物背景</option>
+              <option value="102">宠物颜色</option>
+              <option value="103">宠物套装</option>
+              <option value="104">宠物相框</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>状态</label>
+            <select id="f-status">
+              <option value="0">全部</option>
+              <option value="1">启用</option>
+              <option value="2">禁用</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>名称</label>
+            <input id="f-name" type="text" placeholder="模糊搜索" />
+          </div>
+          <button id="btn-card-search" class="btn">查询</button>
+          <button id="btn-card-reset" class="btn btn-ghost">重置</button>
+        </section>
+
+        <section class="list">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>预览图</th>
+                <th>名称</th>
+                <th>副标题</th>
+                <th>一级类型</th>
+                <th>二级类型</th>
+                <th>状态</th>
+                <th>排序</th>
+                <th>发放数</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="card-tbody">
+              <tr><td colspan="10" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-card-prev" class="btn btn-ghost">上一页</button>
+            <span id="card-page-info">第 1 页</span>
+            <button id="btn-card-next" class="btn btn-ghost">下一页</button>
+            <select id="card-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
+      <!-- ========== 宠物商店 ========== -->
+      <section class="page hidden" id="page-goods">
+        <header class="topbar">
+          <h1>宠物商店管理</h1>
+          <button id="btn-create-goods" class="btn btn-primary">+ 新建商品</button>
+        </header>
+
+        <section class="filter">
+          <div class="filter-item">
+            <label>商品类型</label>
+            <select id="g-type">
+              <option value="0">全部</option>
+              <option value="101">宠物背景</option>
+              <option value="102">宠物颜色</option>
+              <option value="103">宠物套装</option>
+              <option value="104">宠物相框</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>购买类型</label>
+            <select id="g-buy-type">
+              <option value="0">全部</option>
+              <option value="1">金币购买</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>上架状态</label>
+            <select id="g-enabled">
+              <option value="all">全部</option>
+              <option value="true">已上架</option>
+              <option value="false">未上架</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>名称</label>
+            <input id="g-name" type="text" placeholder="模糊搜索" />
+          </div>
+          <button id="btn-goods-search" class="btn">查询</button>
+          <button id="btn-goods-reset" class="btn btn-ghost">重置</button>
+        </section>
+
+        <section class="list">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>卡片ID</th>
+                <th>卡片名称</th>
+                <th>卡片图</th>
+                <th>类型</th>
+                <th>名称</th>
+                <th>价格</th>
+                <th>购买类型</th>
+                <th>排序</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="goods-tbody">
+              <tr><td colspan="11" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-goods-prev" class="btn btn-ghost">上一页</button>
+            <span id="goods-page-info">第 1 页</span>
+            <button id="btn-goods-next" class="btn btn-ghost">下一页</button>
+            <select id="goods-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
+      <!-- ========== 发卡片 ========== -->
+      <section class="page hidden" id="page-send-card">
+        <header class="topbar">
+          <h1>发卡片</h1>
+        </header>
+        <section class="section-card">
+          <form id="form-send-card" class="form form-inline">
+            <div class="form-row">
+              <label>用户ID *</label>
+              <input id="ic-user-id" type="text" required placeholder="输入用户ID" />
+            </div>
+            <div class="form-row">
+              <label>卡片ID *</label>
+              <input id="ic-card-id" type="text" required placeholder="输入卡片ID" />
+            </div>
+            <div class="form-row">
+              <label>来源类型 *</label>
+              <select id="ic-source-type" required>
+                <option value="100">手动补发</option>
+                <option value="1">宠物商城购买</option>
+                <option value="2">激活宠物赠送</option>
+                <option value="0">未知</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>来源业务子ID</label>
+              <input id="ic-source-sub-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>来源业务ID</label>
+              <input id="ic-source-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>来源描述</label>
+              <input id="ic-source-desc" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>备注</label>
+              <input id="ic-remark" type="text" placeholder="选填" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">确认发卡</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <!-- ========== 发金币 ========== -->
+      <section class="page hidden" id="page-send-gold">
+        <header class="topbar">
+          <h1>发金币</h1>
+        </header>
+        <section class="section-card">
+          <form id="form-send-gold" class="form form-inline">
+            <div class="form-row">
+              <label>用户ID *</label>
+              <input id="ig-user-id" type="text" required placeholder="输入用户ID" />
+            </div>
+            <div class="form-row">
+              <label>发放金额 *</label>
+              <input id="ig-amount" type="number" required placeholder="输入金币数量" min="1" />
+            </div>
+            <div class="form-row">
+              <label>业务类型 *</label>
+              <select id="ig-business-type" required>
+                <option value="100">手动补发</option>
+                <option value="1">宠物任务获得</option>
+                <option value="2">用户注册</option>
+                <option value="3">天梯宝箱</option>
+                <option value="4">核心课程</option>
+                <option value="5">课堂巩固</option>
+                <option value="6">小小讲师</option>
+                <option value="7">个性化练习</option>
+                <option value="8">习题课</option>
+                <option value="201">直播活动-答题</option>
+                <option value="202">直播活动-投票</option>
+                <option value="203">直播活动-签到</option>
+                <option value="204">直播活动-红包</option>
+                <option value="205">直播活动-抢麦</option>
+                <option value="206">直播活动-手动奖励</option>
+                <option value="207">直播活动-在线时长达标奖励</option>
+                <option value="208">回放观看时长达标奖励</option>
+                <option value="200">直播活动(兼容历史)</option>
+                <option value="1000">宠物商城购买消耗</option>
+                <option value="0">未知</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>业务单号</label>
+              <input id="ig-business-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>业务子单号</label>
+              <input id="ig-sub-business-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>标题</label>
+              <input id="ig-title" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>描述</label>
+              <input id="ig-description" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>备注</label>
+              <input id="ig-remark" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>幂等键</label>
+              <input id="ig-idempotency-key" type="text" placeholder="选填，避免重复发放" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">确认发金币</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <!-- ========== 发经验 ========== -->
+      <section class="page hidden" id="page-send-exp">
+        <header class="topbar">
+          <h1>发经验</h1>
+        </header>
+        <section class="section-card">
+          <form id="form-send-exp" class="form form-inline">
+            <div class="form-row">
+              <label>用户ID *</label>
+              <input id="ie-user-id" type="text" required placeholder="输入用户ID" />
+            </div>
+            <div class="form-row">
+              <label>宠物ID</label>
+              <input id="ie-pet-id" type="text" placeholder="传0表示当前宠物" />
+              <span class="hint">留空或传0表示当前宠物</span>
+            </div>
+            <div class="form-row">
+              <label>发放经验值 *</label>
+              <input id="ie-exp-num" type="number" required placeholder="输入经验值数量" min="1" />
+            </div>
+            <div class="form-row">
+              <label>来源类型 *</label>
+              <select id="ie-source-type" required>
+                <option value="100">手动补发</option>
+                <option value="1">宠物任务</option>
+                <option value="4">核心课程</option>
+                <option value="5">课堂巩固</option>
+                <option value="6">小小讲师</option>
+                <option value="7">个性化练习</option>
+                <option value="8">习题课</option>
+                <option value="0">未知</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>来源业务ID</label>
+              <input id="ie-source-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>来源业务子ID</label>
+              <input id="ie-source-sub-id" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>来源描述</label>
+              <input id="ie-source-desc" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>备注</label>
+              <input id="ie-remark" type="text" placeholder="选填" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">确认发放</button>
+            </div>
+          </form>
+          <div id="exp-result" class="result-box hidden">
+            <p>发放成功！</p>
+            <p>本次发放: <strong id="res-added-exp">0</strong> 经验值</p>
+            <p>发放后累计: <strong id="res-after-exp">0</strong> 经验值</p>
+          </div>
+        </section>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========== 卡券 新建/编辑 弹窗 ========== -->
+  <div id="modal-card" class="modal hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2 id="modal-card-title">新建卡券</h2>
+        <button class="modal-close" data-close="modal-card">×</button>
+      </header>
+      <form id="card-form" class="form">
+        <input type="hidden" id="f-card-id" />
+        <div class="form-row">
+          <label>卡券名称 *</label>
+          <input id="f-card-name" type="text" required maxlength="100" />
+        </div>
+        <div class="form-row">
+          <label>一级类型 *</label>
+          <select id="f-card-first-type" required>
+            <option value="1">宠物装扮</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>二级类型 *</label>
+          <select id="f-card-second-type" required>
+            <option value="101">宠物背景</option>
+            <option value="102">宠物颜色</option>
+            <option value="103">宠物套装</option>
+            <option value="104">宠物相框</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>副标题</label>
+          <input id="f-card-sub-title" type="text" maxlength="100" />
+        </div>
+        <div class="form-row">
+          <label>色值起始值</label>
+          <input id="f-card-color-start" type="text" placeholder="#FFFFFF" />
+        </div>
+        <div class="form-row">
+          <label>色值结束值</label>
+          <input id="f-card-color-end" type="text" placeholder="#FFFFFF" />
+        </div>
+        <div class="form-row">
+          <label>图片大图 Key</label>
+          <input id="f-card-big-image-url" type="text" placeholder="上传后自动填充 COS 对象 key" />
+        </div>
+        <div class="form-row">
+          <label>上传图片大图</label>
+          <input id="f-card-big-image-file" type="file" accept="image/*" />
+          <button type="button" class="btn btn-ghost" id="btn-upload-big-image">上传</button>
+          <div id="big-image-url-preview" class="img-preview"></div>
+        </div>
+        <div class="form-row">
+          <label>已获得图 Key</label>
+          <input id="f-card-preview-url" type="text" placeholder="上传后自动填充 COS 对象 key" />
+        </div>
+        <div class="form-row">
+          <label>上传已获得图</label>
+          <input id="f-card-preview-file" type="file" accept="image/*" />
+          <button type="button" class="btn btn-ghost" id="btn-upload-preview">上传</button>
+          <div id="preview-url-preview" class="img-preview"></div>
+        </div>
+        <div class="form-row">
+          <label>未获得图 Key</label>
+          <input id="f-card-preview-url-locked" type="text" placeholder="上传后自动填充 COS 对象 key" />
+        </div>
+        <div class="form-row">
+          <label>上传未获得图</label>
+          <input id="f-card-preview-file-locked" type="file" accept="image/*" />
+          <button type="button" class="btn btn-ghost" id="btn-upload-preview-locked">上传</button>
+          <div id="preview-url-locked-preview" class="img-preview"></div>
+        </div>
+        <div class="form-row">
+          <label>卡片描述</label>
+          <textarea id="f-card-desc" rows="2"></textarea>
+        </div>
+        <div class="form-row">
+          <label>状态 *</label>
+          <select id="f-card-status" required>
+            <option value="1">启用</option>
+            <option value="2">禁用</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>排序值</label>
+          <input id="f-card-sort" type="number" value="0" />
+          <span class="hint">越大越靠前</span>
+        </div>
+        <div class="form-row">
+          <label>备注</label>
+          <input id="f-card-remark" type="text" />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-card">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== 商品 新建/编辑 弹窗 ========== -->
+  <div id="modal-goods" class="modal hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2 id="modal-goods-title">新建商品</h2>
+        <button class="modal-close" data-close="modal-goods">×</button>
+      </header>
+      <form id="goods-form" class="form">
+        <input type="hidden" id="g-goods-id" />
+        <div class="form-row">
+          <label>商品名称</label>
+          <input id="g-goods-name" type="text" maxlength="100" />
+        </div>
+        <div class="form-row">
+          <label>商品类型 *</label>
+          <select id="g-goods-type" required>
+            <option value="101">宠物背景</option>
+            <option value="102">宠物颜色</option>
+            <option value="103">宠物套装</option>
+            <option value="104">宠物相框</option>
+          </select>
+          <span class="hint">选择后下方"选择卡片"将按此类型筛选</span>
+        </div>
+        <div class="form-row">
+          <label>关联卡片 (goods_value) *</label>
+          <div class="picker">
+            <input id="g-goods-value" type="text" placeholder="点击右侧按钮选择卡片" readonly />
+            <button type="button" id="btn-pick-card" class="btn">选择卡片</button>
+          </div>
+          <span class="hint" id="g-goods-value-hint">未选择</span>
+        </div>
+        <div class="form-row">
+          <label>商品描述</label>
+          <textarea id="g-goods-desc" rows="2"></textarea>
+        </div>
+        <div class="form-row">
+          <label>商品价格 *</label>
+          <input id="g-goods-price" type="text" required placeholder="例如：100" />
+        </div>
+        <div class="form-row">
+          <label>购买类型 *</label>
+          <select id="g-goods-buy-type" required>
+            <option value="1">金币购买</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>解锁等级 ID</label>
+          <input id="g-unlock-level" type="number" value="0" />
+          <span class="hint">0 表示无限制</span>
+        </div>
+        <div class="form-row">
+          <label>排序值</label>
+          <input id="g-sort" type="number" value="0" />
+          <span class="hint">越大越靠前</span>
+        </div>
+        <div class="form-row">
+          <label>商品补充信息（JSON）</label>
+          <textarea id="g-goods-condition" rows="3" placeholder='{"key":"value"}'></textarea>
+          <span class="hint">需为合法 JSON</span>
+        </div>
+        <div class="form-row">
+          <label>
+            <input id="g-is-enabled" type="checkbox" checked />
+            上架
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-goods">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== 卡片选择器 弹窗 ========== -->
+  <div id="modal-picker" class="modal hidden">
+    <div class="modal-content modal-large">
+      <header class="modal-header">
+        <h2>选择卡片</h2>
+        <button class="modal-close" data-close="modal-picker">×</button>
+      </header>
+      <div class="form">
+        <section class="filter" style="padding: 0 0 12px;">
+          <div class="filter-item">
+            <label>二级类型</label>
+            <select id="pk-second-type">
+              <option value="0">全部</option>
+              <option value="101">宠物背景</option>
+              <option value="102">宠物颜色</option>
+              <option value="103">宠物套装</option>
+              <option value="104">宠物相框</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>名称</label>
+            <input id="pk-name" type="text" placeholder="模糊搜索" />
+          </div>
+          <button id="btn-pk-search" class="btn">查询</button>
+        </section>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>预览图</th>
+              <th>名称</th>
+              <th>二级类型</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="pk-tbody">
+            <tr><td colspan="6" class="empty">请点击查询</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button id="btn-pk-prev" class="btn btn-ghost">上一页</button>
+          <span id="pk-page-info">第 1 页</span>
+          <button id="btn-pk-next" class="btn btn-ghost">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- 按依赖顺序加载：common 提供工具函数，cards/goods 是各模块，app 是入口 -->
+  <script src="/runtime-config.js"></script>
+  <script src="/common.js"></script>
+  <script src="/cards.js"></script>
+  <script src="/goods.js"></script>
+  <script src="/incentive.js"></script>
+  <script src="/exp.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
