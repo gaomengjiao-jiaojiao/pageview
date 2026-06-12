@@ -94,6 +94,7 @@ async function uploadCardImageToCos(file, filePath) {
     file_ext: fileExt,
     file_path: filePath,
     operation_type: 1,
+    bucket_type: 1,
   });
   const signedUrl = permResp && permResp.data && permResp.data.signed_url;
   if (!signedUrl) throw new Error('获取 COS 上传地址失败');

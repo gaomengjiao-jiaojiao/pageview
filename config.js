@@ -9,7 +9,7 @@ module.exports = {
   // BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
 
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'JSESSIONID=EF3D334A9EFF99871C6E12623A973986; userTag=; ssolng=cn; _ga=GA1.2.1352357858.1779355790; i18next=cn; _gid=GA1.2.32266514.1780985320; wpollre_scred=1D855362DA11F4E1852367F333B2286B8F706B2F; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4aeKS36H6G0lEZxWFnCbsvm5c17c5042dae13257438d217fc2c3af6; etoken=cHZZOUxZdGpOQW1LLW4tSlFiRlhDVk1scnpGeUtrNHZrYVdZM202LVhjTUY0YWVLUzM2SDZHMGxGRVp4V0ZuQ2Jzdm01YzE3WGM1MDQyZGFlMTMyNTc0MzhkTjIxN2ZjMmMzYWY2ODRiMA==; ssousername=gaomengjiao',
+  COOKIE: 'JSESSIONID=3C0671421040E996D46C642EB1CDD2E0; userTag=; ssolng=cn; _ga=GA1.2.1352357858.1779355790; i18next=cn; _gid=GA1.2.32266514.1780985320; wpollre_scred=78673F7E94BFCA793DD73B35B2E9D25FBFBA1EEC; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4blInqm6fQJbRwtGKIjdq6_72f80cd2fec8bf8d69084abce51987f9; etoken=cHZUOUxZdGpOQW1LLW4tSlFiRVhDVk1scnpGeUtrNHZrYVdZM202LVljTUY0YmxJbnFtNmZRSmJCUnd0R0tJamRxNl83MmY4SzBjZDJmZWM4YmY4ZDY5MDg0Q2FiY2U1MTk4N2Y5ZTQ5ZA==; ssousername=gaomengjiao',
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录
   // 推荐方案：导出公司 CA 并填这个路径，例如 './certs/wm-ca.pem'
