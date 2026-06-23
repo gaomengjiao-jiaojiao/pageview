@@ -26,16 +26,6 @@ const APP_CONFIG = window.__APP_CONFIG__ || {};
 const FIRST_TYPE_LABEL = { 0: '-', 1: '宠物装扮' };
 const STATUS_LABEL = { 0: '-', 1: '启用', 2: '禁用' };
 
-// 图片预览基础 URL（从运行时配置获取）
-const IMAGE_BASE_URL = window.__APP_CONFIG__?.IMAGE_BASE_URL || 'https://aixue-dev.ihuman.pwrdgp.com/cos/';
-
-// 根据 COS key 构建完整图片 URL
-function buildImageUrl(cosKey) {
-  if (!cosKey) return '';
-  if (cosKey.startsWith('http://') || cosKey.startsWith('https://')) return cosKey;
-  return IMAGE_BASE_URL + cosKey;
-}
-
 // 更新图片预览
 function updateCardImagePreviews() {
   const previewUrl = document.getElementById('f-card-preview-url').value.trim();
@@ -47,19 +37,19 @@ function updateCardImagePreviews() {
   const bigEl = document.getElementById('big-image-url-preview');
 
   if (previewUrl) {
-    previewEl.innerHTML = `<img src="${appEsc(buildImageUrl(previewUrl))}" alt="已获得图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
+    previewEl.innerHTML = `<img src="${appEsc(previewUrl)}" alt="已获得图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
   } else {
     previewEl.innerHTML = '';
   }
 
   if (previewLockedUrl) {
-    lockedEl.innerHTML = `<img src="${appEsc(buildImageUrl(previewLockedUrl))}" alt="未获得图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
+    lockedEl.innerHTML = `<img src="${appEsc(previewLockedUrl)}}" alt="未获得图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
   } else {
     lockedEl.innerHTML = '';
   }
 
   if (bigImageUrl) {
-    bigEl.innerHTML = `<img src="${appEsc(buildImageUrl(bigImageUrl))}" alt="图片大图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
+    bigEl.innerHTML = `<img src="${appEsc(bigImageUrl)}" alt="图片大图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
   } else {
     bigEl.innerHTML = '';
   }
@@ -83,7 +73,7 @@ function buildCardImageObjectKey(file) {
   const safeExt = /^[a-z0-9]+$/.test(ext) ? ext : 'png';
   const rand = Math.random().toString(36).slice(2, 10);
   const rawPrefix = APP_CONFIG.CARD_COS_KEY_PREFIX || 'operation_api/card/';
-  const normalizedPrefix = String(rawPrefix).replace(/^\/+/, '').replace(/\/+$/, '') + '/';
+  const normalizedPrefix = String(rawPrefix).replace(/\/+$/, '') + '/';
   return `${normalizedPrefix}${Date.now()}_${rand}.${safeExt}`;
 }
 

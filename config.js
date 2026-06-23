@@ -6,10 +6,10 @@ module.exports = {
   // dev接口域名（不带末尾斜杠），例如 https://xxx.example.com
   BASE_URL: 'https://aixue-dev.ihuman.pwrdgp.com',
   // 线上接口域名
-  // BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
+  //  BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
 
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'JSESSIONID=3C0671421040E996D46C642EB1CDD2E0; userTag=; ssolng=cn; _ga=GA1.2.1352357858.1779355790; i18next=cn; _gid=GA1.2.32266514.1780985320; wpollre_scred=78673F7E94BFCA793DD73B35B2E9D25FBFBA1EEC; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4blInqm6fQJbRwtGKIjdq6_72f80cd2fec8bf8d69084abce51987f9; etoken=cHZUOUxZdGpOQW1LLW4tSlFiRVhDVk1scnpGeUtrNHZrYVdZM202LVljTUY0YmxJbnFtNmZRSmJCUnd0R0tJamRxNl83MmY4SzBjZDJmZWM4YmY4ZDY5MDg0Q2FiY2U1MTk4N2Y5ZTQ5ZA==; ssousername=gaomengjiao',
+  COOKIE: 'JSESSIONID=50A926D1419AC87E2D9A7CB94E84ACBD; userTag=; ssolng=cn; _ga=GA1.2.1352357858.1779355790; i18next=cn; wpollre_scred=930FC94357A6B847C4EB5B88998D19B2A7F71222; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4bHHD8xtPfw8ruP6z73UaeB36d8c0c3883bde88d335ca3c05f53c99; etoken=cHZNOUxZdGpOQW1LLW4tSlFiWFhDVk1scnpGeUtrNHZrYVdZM202LURjTUY0YkhIRDh4dFBmdzhIcnVQNno3M1VhZUIzNmQ4WGMwYzM4ODNiZGU4OGQzMzVjS2EzYzA1ZjUzYzk5ZmQ2YQ==; ssousername=gaomengjiao',
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录
   // 推荐方案：导出公司 CA 并填这个路径，例如 './certs/wm-ca.pem'
@@ -22,6 +22,6 @@ module.exports = {
   FROM_JSON: 'true',
 
   // 卡片图片上传到 COS 的对象 key 前缀（会自动补齐末尾 /）
-  CARD_COS_KEY_PREFIX: 'incentive/card/',
+  CARD_COS_KEY_PREFIX: '/incentive/card/',
 };
 
