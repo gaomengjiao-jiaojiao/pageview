@@ -204,6 +204,8 @@
                 <option value="100">手动补发</option>
                 <option value="1">宠物商城购买</option>
                 <option value="2">激活宠物赠送</option>
+                <option value="3">捕获Boss获得</option>
+                <option value="4">首次进入获得知知</option>
                 <option value="0">未知</option>
               </select>
             </div>
@@ -222,6 +224,10 @@
             <div class="form-row">
               <label>备注</label>
               <input id="ic-remark" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>幂等键</label>
+              <input id="ic-idempotency-key" type="text" placeholder="选填，避免重复发放" />
             </div>
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">确认发卡</button>

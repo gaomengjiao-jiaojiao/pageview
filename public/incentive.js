@@ -8,7 +8,7 @@ const INCENTIVE_API = {
 };
 
 const CARD_SOURCE_TYPE_LABEL = {
-  0: '未知', 1: '宠物商城购买', 2: '激活宠物赠送', 100: '手动补发',
+  0: '未知', 1: '宠物商城购买', 2: '激活宠物赠送', 3: '捕获Boss获得', 4: '首次进入获得知知', 100: '手动补发',
 };
 const GOLD_BUSINESS_TYPE_LABEL = {
   0: '未知',
@@ -45,10 +45,12 @@ function collectCardForm() {
   const sourceId = document.getElementById('ic-source-id').value.trim();
   const desc = document.getElementById('ic-source-desc').value.trim();
   const remark = document.getElementById('ic-remark').value.trim();
+  const idemKey = document.getElementById('ic-idempotency-key').value.trim();
   if (subId) body.card_source_sub_id = subId;
   if (sourceId) body.card_source_id = sourceId;
   if (desc) body.card_source_desc = desc;
   if (remark) body.remark = remark;
+  if (idemKey) body.idempotency_key = idemKey;
   return body;
 }
 
