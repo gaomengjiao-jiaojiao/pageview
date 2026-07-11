@@ -64,7 +64,6 @@ async function submitSendCard(e) {
     const resp = await _I.post(INCENTIVE_API.SEND_CARD, body);
     const data = resp.data || {};
     _I.toast('发卡成功，user_card_id=' + (data.user_card_id || '-'), 'success');
-    document.getElementById('form-send-card').reset();
   } catch (err) {
     _I.toast('发卡失败：' + err.message, 'error');
   }
