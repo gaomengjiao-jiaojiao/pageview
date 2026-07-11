@@ -187,11 +187,13 @@ function collectCardFormBody() {
   const colorStart = document.getElementById('f-card-color-start').value.trim();
   const colorEnd = document.getElementById('f-card-color-end').value.trim();
   const bigImageUrl = document.getElementById('f-card-big-image-url').value.trim();
+  const cardResLabel = document.getElementById('f-card-res-label').value.trim();
 
   const extConfigObj = {};
   if (colorStart) extConfigObj.color_start = colorStart;
   if (colorEnd) extConfigObj.color_end = colorEnd;
   if (bigImageUrl) extConfigObj.big_image_url = bigImageUrl;
+  if (cardResLabel) extConfigObj.card_res_label = cardResLabel;
 
   return {
     card_name: document.getElementById('f-card-name').value.trim(),
@@ -233,6 +235,7 @@ async function openCardEditModal(cardId) {
     document.getElementById('f-card-color-start').value = extConfig.color_start || '';
     document.getElementById('f-card-color-end').value = extConfig.color_end || '';
     document.getElementById('f-card-big-image-url').value = extConfig.big_image_url || '';
+    document.getElementById('f-card-res-label').value = extConfig.card_res_label || '';
     document.getElementById('f-card-first-type').value = card.card_first_type || 1;
     document.getElementById('f-card-second-type').value = card.card_second_type || 101;
     document.getElementById('f-card-preview-url').value = card.card_preview_url || '';
