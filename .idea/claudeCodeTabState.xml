@@ -7,9 +7,9 @@
           <value>
             <TabSessionState>
               <option name="provider" value="claude" />
-              <option name="sessionId" value="c7f97545-084b-43db-ba14-8a07aa03a0bb" />
+              <option name="sessionId" value="e35aa972-7f37-4106-ae33-069967b0ab99" />
               <option name="cwd" value="$PROJECT_DIR$" />
-              <option name="model" value="z-ai/glm-5.1[1m]" />
+              <option name="model" value="z-ai/glm-5.2[1m]" />
               <option name="permissionMode" value="bypassPermissions" />
               <option name="reasoningEffort" value="medium" />
             </TabSessionState>

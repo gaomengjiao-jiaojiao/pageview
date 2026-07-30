@@ -108,6 +108,177 @@ async function submitSendGold(e) {
   }
 }
 
+// ========== 批量发金币 ==========
+
+// 解析用户ID输入：支持换行/逗号/空格分隔，去空格、去空、去重（保留顺序）
+function parseBatchUserIds(raw) {
+  const list = String(raw || '')
+    .split(/[\s,，;；]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const seen = new Set();
+  const result = [];
+  for (const id of list) {
+    if (!seen.has(id)) { seen.add(id); result.push(id); }
+  }
+  return result;
+}
+
+function collectGoldBatchForm() {
+  const userIds = parseBatchUserIds(document.getElementById('igb-user-ids').value);
+  const body = {
+    amount: Number(document.getElementById('igb-amount').value),
+    business_type: Number(document.getElementById('igb-business-type').value),
+  };
+  const bizId = document.getElementById('igb-business-id').value.trim();
+  const subBizId = document.getElementById('igb-sub-business-id').value.trim();
+  const title = document.getElementById('igb-title').value.trim();
+  const desc = document.getElementById('igb-description').value.trim();
+  const remark = document.getElementById('igb-remark').value.trim();
+  if (bizId) body.business_id = bizId;
+  if (subBizId) body.sub_business_id = subBizId;
+  if (title) body.title = title;
+  if (desc) body.description = desc;
+  if (remark) body.remark = remark;
+  return { userIds, body };
+}
+
+let goldBatchCancelled = false;
+
+function renderGoldBatchProgress(done, total) {
+  const bar = document.getElementById('igb-progress-bar');
+  const text = document.getElementById('igb-progress-text');
+  bar.max = Math.max(total, 1);
+  bar.value = done;
+  text.textContent = `${done} / ${total}`;
+}
+
+function appendGoldBatchRow(idx, userId, ok, data, errMsg) {
+  const tbody = document.querySelector('#igb-result-table tbody');
+  const tr = document.createElement('tr');
+  const resultCell = ok
+    ? `<td class="ok">成功</td>`
+    : `<td class="err">失败</td>`;
+  const infoCell = ok
+    ? `<td>交易ID：${(data && data.transaction_id) || '-'}，余额：${(data && data.balance) || 0}</td>`
+    : `<td>-</td>`;
+  tr.innerHTML = `
+    <td>${idx}</td>
+    <td>${_I.esc(userId)}</td>
+    ${resultCell}
+    ${infoCell}
+    <td>${_I.esc(errMsg || '')}</td>
+  `;
+  tr.className = ok ? 'row-ok' : 'row-err';
+  tbody.appendChild(tr);
+}
+
+function showGoldBatchSummary(total, success, fail) {
+  const el = document.getElementById('igb-summary');
+  el.textContent = `共 ${total} 人，成功 ${success}，失败 ${fail}`;
+}
+
+function exportGoldBatchCsv() {
+  const rows = [['序号', '用户ID', '结果', '交易ID', '余额', '错误信息']];
+  document.querySelectorAll('#igb-result-table tbody tr').forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    rows.push([
+      cells[0]?.textContent || '',
+      cells[1]?.textContent || '',
+      cells[2]?.textContent || '',
+      (cells[3]?.textContent || '').replace(/^交易ID：/, '').replace(/，余额：/, ','),
+      '',
+      cells[4]?.textContent || '',
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `batch_gold_${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// 并发池：最多 concurrency 个请求在飞，失败继续，支持取消
+async function runGoldBatchPool(userIds, baseBody, idemPrefix, concurrency, onItem) {
+  let cursor = 0;
+  let done = 0;
+  const total = userIds.length;
+  const workers = [];
+  const N = Math.min(concurrency, total);
+
+  async function worker() {
+    while (cursor < userIds.length && !goldBatchCancelled) {
+      const idx = cursor++;
+      const userId = userIds[idx];
+      const body = { ...baseBody, user_id: userId };
+      if (idemPrefix) body.idempotency_key = `${idemPrefix}_${userId}`;
+      let ok = false, data = null, errMsg = '';
+      try {
+        const resp = await _I.post(INCENTIVE_API.SEND_GOLD, body);
+        data = resp.data || {};
+        ok = true;
+      } catch (err) {
+        errMsg = err.message || String(err);
+      }
+      onItem(idx, userId, ok, data, errMsg);
+      done++;
+      renderGoldBatchProgress(done, total);
+    }
+  }
+
+  for (let i = 0; i < N; i++) workers.push(worker());
+  await Promise.all(workers);
+}
+
+async function submitSendGoldBatch(e) {
+  e.preventDefault();
+  const { userIds, body } = collectGoldBatchForm();
+  if (!userIds.length) { _I.toast('请填写用户ID列表', 'error'); return; }
+  if (!body.amount) { _I.toast('请填写发放金额', 'error'); return; }
+
+  const idemPrefix = document.getElementById('igb-idempotency-key').value.trim();
+  const concurrency = Math.max(1, Math.min(20, Number(document.getElementById('igb-concurrency').value) || 5));
+
+  // 重置 UI
+  goldBatchCancelled = false;
+  document.querySelector('#igb-result-table tbody').innerHTML = '';
+  document.getElementById('igb-export').classList.add('hidden');
+  document.getElementById('igb-cancel').classList.remove('hidden');
+  document.getElementById('igb-summary').textContent = '';
+  renderGoldBatchProgress(0, userIds.length);
+
+  let success = 0, fail = 0;
+  const startBtn = e.target.querySelector('button[type="submit"]');
+  startBtn.disabled = true;
+
+  try {
+    await runGoldBatchPool(userIds, body, idemPrefix, concurrency, (idx, userId, ok, data, errMsg) => {
+      appendGoldBatchRow(idx + 1, userId, ok, data, errMsg);
+      if (ok) success++; else fail++;
+    });
+  } finally {
+    startBtn.disabled = false;
+    document.getElementById('igb-cancel').classList.add('hidden');
+    showGoldBatchSummary(userIds.length, success, fail);
+    if (fail > 0 || success > 0) document.getElementById('igb-export').classList.remove('hidden');
+    if (goldBatchCancelled) _I.toast('已取消', 'info');
+    else _I.toast(`完成：成功 ${success}，失败 ${fail}`, success && !fail ? 'success' : 'info');
+  }
+}
+
+function cancelGoldBatch() {
+  goldBatchCancelled = true;
+}
+
+function initSendGoldBatch() {
+  document.getElementById('form-send-gold-batch').addEventListener('submit', submitSendGoldBatch);
+  document.getElementById('igb-cancel').addEventListener('click', cancelGoldBatch);
+  document.getElementById('igb-export').addEventListener('click', exportGoldBatchCsv);
+}
+
 // ========== 模块初始化 ==========
 
 function initSendCard() {
@@ -120,3 +291,4 @@ function initSendGold() {
 
 window.SendCard = { initSendCard };
 window.SendGold = { initSendGold };
+window.SendGoldBatch = { initSendGoldBatch };

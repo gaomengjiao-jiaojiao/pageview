@@ -24,6 +24,9 @@
         <a class="nav-item" data-page="send-gold" href="#send-gold">
           <span class="nav-icon">🪙</span>发金币
         </a>
+        <a class="nav-item" data-page="send-gold-batch" href="#send-gold-batch">
+          <span class="nav-icon">💰</span>批量发金币
+        </a>
         <a class="nav-item" data-page="send-exp" href="#send-exp">
           <span class="nav-icon">⭐</span>发经验
         </a>
@@ -304,6 +307,106 @@
               <button type="submit" class="btn btn-primary">确认发金币</button>
             </div>
           </form>
+        </section>
+      </section>
+
+      <!-- ========== 批量发金币 ========== -->
+      <section class="page hidden" id="page-send-gold-batch">
+        <header class="topbar">
+          <h1>批量发金币</h1>
+        </header>
+        <section class="section-card">
+          <form id="form-send-gold-batch" class="form form-inline">
+            <div class="form-row">
+              <label>用户ID列表 *</label>
+              <textarea id="igb-user-ids" rows="6" required placeholder="每行一个用户ID，或用逗号/空格分隔"></textarea>
+              <span class="hint">每行一个或用逗号/空格分隔，自动去空格去重</span>
+            </div>
+            <div class="form-row">
+              <label>发放金额 *</label>
+              <input id="igb-amount" type="number" required placeholder="输入金币数量" min="1" />
+            </div>
+            <div class="form-row">
+              <label>业务类型 *</label>
+              <select id="igb-business-type" required>
+                <option value="100">手动补发</option>
+                <option value="1">宠物任务获得</option>
+                <option value="2">用户注册</option>
+                <option value="3">天梯宝箱</option>
+                <option value="4">核心课程</option>
+                <option value="5">课堂巩固</option>
+                <option value="6">小小讲师</option>
+                <option value="7">个性化练习</option>
+                <option value="8">习题课</option>
+                <option value="201">直播活动-答题</option>
+                <option value="202">直播活动-投票</option>
+                <option value="203">直播活动-签到</option>
+                <option value="204">直播活动-红包</option>
+                <option value="205">直播活动-抢麦</option>
+                <option value="206">直播活动-手动奖励</option>
+                <option value="207">直播活动-在线时长达标奖励</option>
+                <option value="208">回放观看时长达标奖励</option>
+                <option value="200">直播活动(兼容历史)</option>
+                <option value="1000">宠物商城购买消耗</option>
+                <option value="0">未知</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>业务单号</label>
+              <input id="igb-business-id" type="text" placeholder="选填，所有用户共用" />
+            </div>
+            <div class="form-row">
+              <label>业务子单号</label>
+              <input id="igb-sub-business-id" type="text" placeholder="选填，所有用户共用" />
+            </div>
+            <div class="form-row">
+              <label>标题</label>
+              <input id="igb-title" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>描述</label>
+              <input id="igb-description" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>备注</label>
+              <input id="igb-remark" type="text" placeholder="选填" />
+            </div>
+            <div class="form-row">
+              <label>幂等键前缀</label>
+              <input id="igb-idempotency-key" type="text" placeholder="选填，自动拼接 _用户ID" />
+              <span class="hint">填了则对每个用户生成 前缀_用户ID；留空则不传</span>
+            </div>
+            <div class="form-row">
+              <label>并发数</label>
+              <input id="igb-concurrency" type="number" value="5" min="1" max="20" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">开始批量发放</button>
+              <button type="button" id="igb-cancel" class="btn btn-ghost hidden">取消</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="section-card">
+          <div class="form-row" style="display:flex; align-items:center; gap:12px;">
+            <strong>进度：</strong>
+            <span id="igb-progress-text">未开始</span>
+          </div>
+          <progress id="igb-progress-bar" value="0" max="1" style="width:100%;"></progress>
+        </section>
+
+        <section class="section-card">
+          <div class="form-row" style="display:flex; align-items:center; gap:12px;">
+            <strong>结果：</strong>
+            <span id="igb-summary"></span>
+            <button type="button" id="igb-export" class="btn btn-ghost hidden">导出 CSV</button>
+          </div>
+          <table class="table" id="igb-result-table">
+            <thead>
+              <tr><th>序号</th><th>用户ID</th><th>结果</th><th>交易ID/余额</th><th>错误信息</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </section>
       </section>
 
