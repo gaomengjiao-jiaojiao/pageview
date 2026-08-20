@@ -18,7 +18,7 @@ document.querySelectorAll('.modal').forEach(modal => {
 // 路由切换：根据 hash 显示对应页面，更新侧边栏激活状态
 function switchPage(page) {
   // 默认到 cards
-  const validPages = ['cards', 'goods', 'send-card', 'send-gold', 'send-gold-batch', 'send-exp'];
+  const validPages = ['cards', 'goods', 'send-card', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate'];
   if (!validPages.includes(page)) page = 'cards';
 
   document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -49,4 +49,5 @@ window.SendCard.initSendCard();
 window.SendGold.initSendGold();
 window.SendGoldBatch.initSendGoldBatch();
 window.SendExp.initSendExp();
+window.LiveStudyMigrate.initLiveStudyMigrate();
 switchPage(currentPageFromHash());

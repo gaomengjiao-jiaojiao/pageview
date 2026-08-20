@@ -30,6 +30,9 @@
         <a class="nav-item" data-page="send-exp" href="#send-exp">
           <span class="nav-icon">⭐</span>发经验
         </a>
+        <a class="nav-item" data-page="live-study-migrate" href="#live-study-migrate">
+          <span class="nav-icon">📚</span>直播学习迁移
+        </a>
       </nav>
     </aside>
 
@@ -463,10 +466,86 @@
               <button type="submit" class="btn btn-primary">确认发放</button>
             </div>
           </form>
-          <div id="exp-result" class="result-box hidden">
+          <div id="exp-result" class="result-card hidden">
             <p>发放成功！</p>
             <p>本次发放: <strong id="res-added-exp">0</strong> 经验值</p>
             <p>发放后累计: <strong id="res-after-exp">0</strong> 经验值</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ========== 直播学习进度迁移 ========== -->
+      <section class="page hidden" id="page-live-study-migrate">
+        <header class="topbar">
+          <h1>直播课历史学习数据迁移</h1>
+        </header>
+        <section class="section-card">
+          <div class="hint" style="margin-bottom: 16px;">
+            一次性运维工具，后端幂等可重跑。`room_id`、`start_time_from`、`start_time_to` 至少填写一个，避免误迁全量。
+          </div>
+          <form id="form-live-study-migrate" class="form">
+            <div class="form-row">
+              <label>房间 ID</label>
+              <input id="lm-room-id" type="text" inputmode="numeric" placeholder="指定单个房间迁移；填 0 或留空表示不指定" />
+              <span class="hint">适合测试、补漏；按字符串传，避免超大 room_id 在浏览器里丢精度。</span>
+            </div>
+            <div class="form-row">
+              <label>直播开始时间下限（Unix 秒）</label>
+              <input id="lm-start-time-from" type="number" min="0" placeholder="例如 1722441600" />
+              <span class="hint">可选。按直播开始时间筛历史房间的起点。</span>
+            </div>
+            <div class="form-row">
+              <label>直播开始时间上限（Unix 秒）</label>
+              <input id="lm-start-time-to" type="number" min="0" placeholder="例如 1722441600" />
+              <span class="hint">可选。按直播开始时间筛历史房间的终点；和 room_id / start_time_from 至少传一个。</span>
+            </div>
+            <div class="form-row">
+              <label>房间起始页</label>
+              <input id="lm-room-page" type="number" min="1" placeholder="默认 1" />
+              <span class="hint">批量模式下从第几页房间开始跑。执行后如果还有数据，下一次直接用返回的 `next_room_page` 继续。</span>
+            </div>
+            <div class="form-row">
+              <label>房间分页大小</label>
+              <input id="lm-room-limit" type="number" min="0" placeholder="默认 100" />
+              <span class="hint">直接作为 GetRoomList 的 PageSize 使用。</span>
+            </div>
+            <div class="form-row">
+              <label>上报限速间隔（毫秒）</label>
+              <input id="lm-pace-ms" type="number" min="0" placeholder="默认 50" />
+            </div>
+            <div class="form-row">
+              <label>
+                <input id="lm-dry-run" type="checkbox" checked />
+                仅统计，不实际迁移（dry run）
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btn-live-study-migrate" class="btn btn-primary">执行迁移</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="section-card">
+          <h2 style="margin-top: 0;">执行结果</h2>
+          <pre id="lm-result" class="result-box">尚未执行</pre>
+          <div id="lm-dry-run-panel" class="hidden" style="margin-top: 16px;">
+            <h3 class="section-title" style="margin-top: 0;">学习数据明细</h3>
+            <div id="lm-dry-run-summary" class="hint" style="margin-bottom: 12px;"></div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Room ID</th>
+                    <th>Lesson ID</th>
+                    <th>User ID</th>
+                    <th>TotalDuration</th>
+                    <th>WatchDuration</th>
+                    <th>LiveDuration</th>
+                  </tr>
+                </thead>
+                <tbody id="lm-dry-run-body"></tbody>
+              </table>
+            </div>
           </div>
         </section>
       </section>
@@ -709,6 +788,7 @@
   <script src="/goods.js"></script>
   <script src="/incentive.js"></script>
   <script src="/exp.js"></script>
+  <script src="/migrate.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>
