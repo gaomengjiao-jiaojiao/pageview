@@ -7,7 +7,7 @@ module.exports = {
   // 线上接口域名
   //  BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4YSoQQjCXwsgdQ1a-jCTQ4t0d26d4029cf5956015ec98cda1663efd'
+  COOKIE: 'iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4b_yuFQAa5oiMUsE2kaCHNZaeec66d242c056bb9d0c2f3f15f7b056'
       ,
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录

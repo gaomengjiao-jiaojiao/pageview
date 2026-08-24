@@ -46,26 +46,47 @@ function collectLiveStudyMigrateForm() {
 
 function renderLiveStudyMigrateResult(payload) {
   const el = document.getElementById('lm-result');
-  el.textContent = JSON.stringify(payload, null, 2);
-
   const panel = document.getElementById('lm-dry-run-panel');
-  const summary = document.getElementById('lm-dry-run-summary');
-  const body = document.getElementById('lm-dry-run-body');
+  const summaryEl = document.getElementById('lm-dry-run-summary');
+  const bodyEl = document.getElementById('lm-dry-run-body');
 
-  panel.classList.add('hidden');
-  summary.textContent = '';
-  body.innerHTML = '';
+  if (panel && summaryEl && bodyEl) {
+    panel.classList.add('hidden');
+    summaryEl.textContent = '';
+    bodyEl.innerHTML = '';
+  }
 
-  const items = payload && payload.data && Array.isArray(payload.data.dry_run_items)
-    ? payload.data.dry_run_items
-    : [];
-  if (!items.length) {
+  if (!payload || !payload.data) {
+    el.textContent = JSON.stringify(payload, null, 2);
+    return;
+  }
+
+  const data = payload.data;
+  const summary = {
+    code: payload.code,
+    data: {
+      room_page: data.room_page,
+      next_room_page: data.next_room_page,
+      has_more_rooms: data.has_more_rooms,
+      total_rooms: data.total_rooms,
+      skipped_rooms: data.skipped_rooms,
+      migrated_lessons: data.migrated_lessons,
+      reported_students: data.reported_students,
+      dry_run_item_count: data.dry_run_item_count,
+      dry_run_omitted: data.dry_run_omitted,
+      errors: data.errors || [],
+    },
+  };
+  el.textContent = JSON.stringify(summary, null, 2);
+
+  const items = Array.isArray(data.dry_run_items) ? data.dry_run_items : [];
+  if (!items.length || !panel || !summaryEl || !bodyEl) {
     return;
   }
 
   panel.classList.remove('hidden');
-  summary.textContent = `共展示 ${items.length} 条学习数据，reported_students=${payload?.data?.reported_students ?? 0} 表示其中满足迁移条件的数量。`;
-  body.innerHTML = items.map((item) => `
+  summaryEl.textContent = `共展示 ${items.length} 条学习数据，reported_students=${data.reported_students || 0} 表示其中满足迁移条件的数量。`;
+  bodyEl.innerHTML = items.map((item) => `
     <tr>
       <td>${item.room_id ?? ''}</td>
       <td>${item.lesson_id ?? ''}</td>
