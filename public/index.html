@@ -638,107 +638,54 @@
       <section class="page hidden" id="page-coupon-grant">
         <header class="topbar">
           <h1>优惠券发放</h1>
+          <button id="btn-create-grant" class="btn btn-primary">+ 新建发放批次</button>
         </header>
 
-        <section class="section-card">
-          <h2 class="section-title">发放优惠券</h2>
-          <form id="form-grant" class="form">
-            <div class="form-row">
-              <label>选择优惠券（仅已上线，可多选）*</label>
-              <div id="grant-coupon-options" class="check-list"><span class="hint">加载中…</span></div>
-              <button type="button" id="btn-refresh-options" class="btn btn-ghost">刷新可选项</button>
-              <span class="hint">发放为异步执行，提交成功后可在下方批次列表跟踪结果</span>
-            </div>
-            <div class="form-row">
-              <label>发放方式 *</label>
-              <select id="f-grant-type">
-                <option value="1">运营手动（提交后立即发放）</option>
-                <option value="2">系统自动（到计划时间发放）</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label>指定 SPU（按 SPU 解析目标用户）</label>
-              <textarea id="f-grant-spu-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
-            </div>
-            <div class="form-row">
-              <label>指定用户 ID 列表</label>
-              <textarea id="f-grant-user-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
-            </div>
-            <div class="form-row">
-              <label>指定手机号列表</label>
-              <textarea id="f-grant-phones" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
-              <span class="hint">以上三种发放范围至少填一种</span>
-            </div>
-            <div class="form-row">
-              <label>本批用户券生效时间</label>
-              <input id="f-grant-valid-start" type="datetime-local" />
-            </div>
-            <div class="form-row">
-              <label>本批用户券失效时间</label>
-              <input id="f-grant-valid-end" type="datetime-local" />
-              <span class="hint">选填；留空则跟随券模板有效期，填写需起止同时填</span>
-            </div>
-            <div class="form-row hidden" id="grant-time-row">
-              <label>计划发放时间 *</label>
-              <input id="f-grant-grant-time" type="datetime-local" />
-              <span class="hint">系统自动发放必填；运营手动发放不传</span>
-            </div>
-            <div class="form-row">
-              <label>发券原因 *</label>
-              <input id="f-grant-reason" type="text" required placeholder="运营手动发券必填" />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">提交发放</button>
-            </div>
-          </form>
+        <section class="filter">
+          <div class="filter-item">
+            <label>批次编号</label>
+            <input id="gb-f-batch-no" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>批次 ID</label>
+            <input id="gb-f-batch-id" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>优惠券 ID</label>
+            <input id="gb-f-coupon-id" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>发放方式</label>
+            <select id="gb-f-grant-type">
+              <option value="0">全部</option>
+              <option value="1">运营手动</option>
+              <option value="2">系统自动</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>执行状态</label>
+            <select id="gb-f-execute-status">
+              <option value="0">全部</option>
+              <option value="1">待执行</option>
+              <option value="2">执行中</option>
+              <option value="3">完成</option>
+              <option value="4">部分失败</option>
+              <option value="5">结果未知</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>使用控制</label>
+            <select id="gb-f-use-status">
+              <option value="0">全部</option>
+              <option value="1">启用</option>
+              <option value="2">停用</option>
+            </select>
+          </div>
+          <button id="btn-gb-search" class="btn">查询</button>
+          <button id="btn-gb-reset" class="btn btn-ghost">重置</button>
         </section>
 
-        <section class="section-card">
-          <h2 class="section-title">发放批次</h2>
-          <section class="filter" style="padding: 0 0 12px; border-bottom: none;">
-            <div class="filter-item">
-              <label>批次编号</label>
-              <input id="gb-f-batch-no" type="text" />
-            </div>
-            <div class="filter-item">
-              <label>批次 ID</label>
-              <input id="gb-f-batch-id" type="text" />
-            </div>
-            <div class="filter-item">
-              <label>优惠券 ID</label>
-              <input id="gb-f-coupon-id" type="text" />
-            </div>
-            <div class="filter-item">
-              <label>发放方式</label>
-              <select id="gb-f-grant-type">
-                <option value="0">全部</option>
-                <option value="1">运营手动</option>
-                <option value="2">系统自动</option>
-              </select>
-            </div>
-            <div class="filter-item">
-              <label>执行状态</label>
-              <select id="gb-f-execute-status">
-                <option value="0">全部</option>
-                <option value="1">待执行</option>
-                <option value="2">执行中</option>
-                <option value="3">完成</option>
-                <option value="4">部分失败</option>
-                <option value="5">结果未知</option>
-              </select>
-            </div>
-            <div class="filter-item">
-              <label>使用控制</label>
-              <select id="gb-f-use-status">
-                <option value="0">全部</option>
-                <option value="1">启用</option>
-                <option value="2">停用</option>
-              </select>
-            </div>
-            <button id="btn-gb-search" class="btn">查询</button>
-            <button id="btn-gb-reset" class="btn btn-ghost">重置</button>
-          </section>
-
+        <section class="list">
           <table>
             <thead>
               <tr>
@@ -960,6 +907,66 @@
     </div>
   </div>
 
+  <!-- ========== 新建发放批次 弹窗 ========== -->
+  <div id="modal-grant" class="modal hidden">
+    <div class="modal-content modal-large">
+      <header class="modal-header">
+        <h2>新建发放批次</h2>
+        <button class="modal-close" data-close="modal-grant">×</button>
+      </header>
+      <form id="form-grant" class="form">
+        <div class="form-row">
+          <label>选择优惠券（仅已上线，可多选）*</label>
+          <div id="grant-coupon-options" class="check-list"><span class="hint">加载中…</span></div>
+          <button type="button" id="btn-refresh-options" class="btn btn-ghost">刷新可选项</button>
+          <span class="hint">发放为异步执行，提交成功后在批次列表跟踪结果</span>
+        </div>
+        <div class="form-row">
+          <label>发放方式 *</label>
+          <select id="f-grant-type">
+            <option value="1">运营手动（提交后立即发放）</option>
+            <option value="2">系统自动（到计划时间发放）</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>指定 SPU（按 SPU 解析目标用户）</label>
+          <textarea id="f-grant-spu-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+        </div>
+        <div class="form-row">
+          <label>指定用户 ID 列表</label>
+          <textarea id="f-grant-user-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+        </div>
+        <div class="form-row">
+          <label>指定手机号列表</label>
+          <textarea id="f-grant-phones" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+          <span class="hint">以上三种发放范围至少填一种</span>
+        </div>
+        <div class="form-row">
+          <label>本批用户券生效时间</label>
+          <input id="f-grant-valid-start" type="datetime-local" />
+        </div>
+        <div class="form-row">
+          <label>本批用户券失效时间</label>
+          <input id="f-grant-valid-end" type="datetime-local" />
+          <span class="hint">选填；留空则跟随券模板有效期，填写需起止同时填</span>
+        </div>
+        <div class="form-row hidden" id="grant-time-row">
+          <label>计划发放时间 *</label>
+          <input id="f-grant-grant-time" type="datetime-local" />
+          <span class="hint">系统自动发放必填；运营手动发放不传</span>
+        </div>
+        <div class="form-row">
+          <label>发券原因 *</label>
+          <input id="f-grant-reason" type="text" required placeholder="运营手动发券必填" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-grant">取消</button>
+          <button type="submit" class="btn btn-primary">提交发放</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ========== 发放批次 详情 弹窗 ========== -->
   <div id="modal-grant-batch" class="modal hidden">
     <div class="modal-content modal-large">
@@ -997,25 +1004,25 @@
     </div>
   </div>
 
-  <!-- ========== 停用发放批次 弹窗 ========== -->
+  <!-- ========== 下线发放批次 弹窗 ========== -->
   <div id="modal-disable-batch" class="modal hidden">
     <div class="modal-content">
       <header class="modal-header">
-        <h2>停用发放批次</h2>
+        <h2>下线发放批次</h2>
         <button class="modal-close" data-close="modal-disable-batch">×</button>
       </header>
       <form id="disable-batch-form" class="form">
         <input type="hidden" id="f-db-batch-id" />
         <div class="hint" style="margin-bottom: 12px;">
-          停用后：已发放的券会作废，未发放的不再发放。该操作不可恢复，请谨慎操作。
+          下线后：已发放的券会作废，未发放的不再发放。该操作不可恢复，请谨慎操作。
         </div>
         <div class="form-row">
-          <label>停用原因 *</label>
+          <label>下线原因 *</label>
           <textarea id="f-db-reason" rows="3" required></textarea>
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-ghost" data-close="modal-disable-batch">取消</button>
-          <button type="submit" class="btn btn-danger">确认停用</button>
+          <button type="submit" class="btn btn-danger">确认下线</button>
         </div>
       </form>
     </div>

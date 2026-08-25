@@ -509,6 +509,13 @@ function updateGrantTypeUI() {
   document.getElementById('grant-time-row').classList.toggle('hidden', type !== 2);
 }
 
+function openGrantModal() {
+  document.getElementById('form-grant').reset();
+  updateGrantTypeUI();
+  loadGrantOptions();
+  _C.openModal('modal-grant');
+}
+
 async function submitGrantForm(e) {
   e.preventDefault();
   const couponIds = Array.from(
@@ -556,9 +563,8 @@ async function submitGrantForm(e) {
   try {
     const resp = await _C.post(COUPON_API.GRANT, body);
     const batchId = (resp.data && resp.data.batch_id) || '-';
-    _C.toast(`提交成功，批次 ID：${batchId}，发放结果请查看批次列表`, 'success');
-    document.getElementById('form-grant').reset();
-    updateGrantTypeUI();
+    _C.toast(`提交成功，批次 ID：${batchId}，发放结果请在列表中查看明细`, 'success');
+    _C.closeModal('modal-grant');
     batchState.page = 1;
     loadBatchList();
   } catch (err) {
@@ -600,7 +606,7 @@ function renderBatchList(list) {
     const validText = `${fmtTime(b.valid_start_at)}<br>~ ${fmtTime(b.valid_end_at)}`;
     const counts = `${fmtNum(b.total_count)} / ${fmtNum(b.success_count)} / ${fmtNum(b.other_count)}`;
     const disableBtn = Number(b.use_status) === 1
-      ? `<button class="btn btn-danger" data-action="disable" data-id="${_C.esc(b.batch_id)}">停用</button>`
+      ? `<button class="btn btn-danger" data-action="disable" data-id="${_C.esc(b.batch_id)}">下线</button>`
       : '';
     return `
       <tr>
@@ -665,7 +671,7 @@ function renderBatchInfo(b) {
     ['券失效时间', fmtTime(b.valid_end_at)],
     ['计划发放时间', b.grant_time ? fmtTime(b.grant_time) : '立即发放'],
     ['发券原因', b.reason || '-'],
-    ['停用原因', b.use_status_reason || '-'],
+    ['下线原因', b.use_status_reason || '-'],
     ['发放范围', grantScopeText(b.grant_scope_rule)],
     ['创建人 ID', b.created_by || '-'],
     ['创建时间', fmtTime(b.created_at)],
@@ -691,7 +697,7 @@ function renderGrantRecords(list) {
   `).join('');
 }
 
-// ---------- 停用批次 ----------
+// ---------- 下线批次 ----------
 
 function openDisableBatchModal(batchId) {
   document.getElementById('f-db-batch-id').value = batchId;
@@ -703,19 +709,20 @@ async function submitDisableBatch(e) {
   e.preventDefault();
   const batchId = document.getElementById('f-db-batch-id').value;
   const reason = document.getElementById('f-db-reason').value.trim();
-  if (!reason) { _C.toast('请填写停用原因', 'error'); return; }
-  if (!confirm('停用后已发放的券会作废、未发放的不再发放，确定停用该批次吗？')) return;
+  if (!reason) { _C.toast('请填写下线原因', 'error'); return; }
+  if (!confirm('下线后已发放的券会作废、未发放的不再发放，确定下线该批次吗？')) return;
   try {
     await _C.post(COUPON_API.DISABLE_BATCH, { batch_id: batchId, reason });
-    _C.toast('停用成功', 'success');
+    _C.toast('下线成功', 'success');
     _C.closeModal('modal-disable-batch');
     loadBatchList();
   } catch (err) {
-    _C.toast('停用失败：' + err.message, 'error');
+    _C.toast('下线失败：' + err.message, 'error');
   }
 }
 
 function initGrantPage() {
+  document.getElementById('btn-create-grant').addEventListener('click', openGrantModal);
   document.getElementById('form-grant').addEventListener('submit', submitGrantForm);
   document.getElementById('f-grant-type').addEventListener('change', updateGrantTypeUI);
   document.getElementById('btn-refresh-options').addEventListener('click', () => loadGrantOptions(true));
