@@ -33,6 +33,15 @@
         <a class="nav-item" data-page="live-study-migrate" href="#live-study-migrate">
           <span class="nav-icon">📚</span>直播学习迁移
         </a>
+        <a class="nav-item" data-page="coupons" href="#coupons">
+          <span class="nav-icon">🎫</span>优惠券管理
+        </a>
+        <a class="nav-item" data-page="coupon-grant" href="#coupon-grant">
+          <span class="nav-icon">🧧</span>优惠券发放
+        </a>
+        <a class="nav-item" data-page="user-coupons" href="#user-coupons">
+          <span class="nav-icon">👥</span>用户优惠券
+        </a>
       </nav>
     </aside>
 
@@ -550,7 +559,466 @@
         </section>
       </section>
 
+      <!-- ========== 优惠券管理 ========== -->
+      <section class="page hidden" id="page-coupons">
+        <header class="topbar">
+          <h1>优惠券管理</h1>
+          <button id="btn-create-coupon" class="btn btn-primary">+ 新建优惠券</button>
+        </header>
+
+        <section class="filter">
+          <div class="filter-item">
+            <label>券类型</label>
+            <select id="cp-f-type">
+              <option value="0">全部</option>
+              <option value="1">立减券</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>整体状态</label>
+            <select id="cp-f-status">
+              <option value="0">全部</option>
+              <option value="1">未上线</option>
+              <option value="2">上线</option>
+              <option value="3">下线</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>名称</label>
+            <input id="cp-f-name" type="text" placeholder="模糊搜索" />
+          </div>
+          <div class="filter-item">
+            <label>优惠券 ID</label>
+            <input id="cp-f-id" type="text" placeholder="精确查询" />
+          </div>
+          <div class="filter-item">
+            <label>券编号</label>
+            <input id="cp-f-no" type="text" placeholder="精确查询" />
+          </div>
+          <button id="btn-cp-search" class="btn">查询</button>
+          <button id="btn-cp-reset" class="btn btn-ghost">重置</button>
+        </section>
+
+        <section class="list">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>券编号</th>
+                <th>名称</th>
+                <th>类型</th>
+                <th>优惠金额</th>
+                <th>有效期</th>
+                <th>总库存</th>
+                <th>单用户限领</th>
+                <th>状态</th>
+                <th>更新时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="cp-tbody">
+              <tr><td colspan="11" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-cp-prev" class="btn btn-ghost">上一页</button>
+            <span id="cp-page-info">第 1 页</span>
+            <button id="btn-cp-next" class="btn btn-ghost">下一页</button>
+            <select id="cp-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
+      <!-- ========== 优惠券发放 ========== -->
+      <section class="page hidden" id="page-coupon-grant">
+        <header class="topbar">
+          <h1>优惠券发放</h1>
+        </header>
+
+        <section class="section-card">
+          <h2 class="section-title">发放优惠券</h2>
+          <form id="form-grant" class="form">
+            <div class="form-row">
+              <label>选择优惠券（仅已上线，可多选）*</label>
+              <div id="grant-coupon-options" class="check-list"><span class="hint">加载中…</span></div>
+              <button type="button" id="btn-refresh-options" class="btn btn-ghost">刷新可选项</button>
+              <span class="hint">发放为异步执行，提交成功后可在下方批次列表跟踪结果</span>
+            </div>
+            <div class="form-row">
+              <label>发放方式 *</label>
+              <select id="f-grant-type">
+                <option value="1">运营手动（提交后立即发放）</option>
+                <option value="2">系统自动（到计划时间发放）</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>指定 SPU（按 SPU 解析目标用户）</label>
+              <textarea id="f-grant-spu-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+            </div>
+            <div class="form-row">
+              <label>指定用户 ID 列表</label>
+              <textarea id="f-grant-user-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+            </div>
+            <div class="form-row">
+              <label>指定手机号列表</label>
+              <textarea id="f-grant-phones" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+              <span class="hint">以上三种发放范围至少填一种</span>
+            </div>
+            <div class="form-row">
+              <label>本批用户券生效时间</label>
+              <input id="f-grant-valid-start" type="datetime-local" />
+            </div>
+            <div class="form-row">
+              <label>本批用户券失效时间</label>
+              <input id="f-grant-valid-end" type="datetime-local" />
+              <span class="hint">选填；留空则跟随券模板有效期，填写需起止同时填</span>
+            </div>
+            <div class="form-row hidden" id="grant-time-row">
+              <label>计划发放时间 *</label>
+              <input id="f-grant-grant-time" type="datetime-local" />
+              <span class="hint">系统自动发放必填；运营手动发放不传</span>
+            </div>
+            <div class="form-row">
+              <label>发券原因 *</label>
+              <input id="f-grant-reason" type="text" required placeholder="运营手动发券必填" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">提交发放</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="section-card">
+          <h2 class="section-title">发放批次</h2>
+          <section class="filter" style="padding: 0 0 12px; border-bottom: none;">
+            <div class="filter-item">
+              <label>批次编号</label>
+              <input id="gb-f-batch-no" type="text" />
+            </div>
+            <div class="filter-item">
+              <label>批次 ID</label>
+              <input id="gb-f-batch-id" type="text" />
+            </div>
+            <div class="filter-item">
+              <label>优惠券 ID</label>
+              <input id="gb-f-coupon-id" type="text" />
+            </div>
+            <div class="filter-item">
+              <label>发放方式</label>
+              <select id="gb-f-grant-type">
+                <option value="0">全部</option>
+                <option value="1">运营手动</option>
+                <option value="2">系统自动</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>执行状态</label>
+              <select id="gb-f-execute-status">
+                <option value="0">全部</option>
+                <option value="1">待执行</option>
+                <option value="2">执行中</option>
+                <option value="3">完成</option>
+                <option value="4">部分失败</option>
+                <option value="5">结果未知</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>使用控制</label>
+              <select id="gb-f-use-status">
+                <option value="0">全部</option>
+                <option value="1">启用</option>
+                <option value="2">停用</option>
+              </select>
+            </div>
+            <button id="btn-gb-search" class="btn">查询</button>
+            <button id="btn-gb-reset" class="btn btn-ghost">重置</button>
+          </section>
+
+          <table>
+            <thead>
+              <tr>
+                <th>批次 ID</th>
+                <th>批次编号</th>
+                <th>优惠券</th>
+                <th>发放方式</th>
+                <th>券有效期</th>
+                <th>计划发放</th>
+                <th>目标/成功/其他</th>
+                <th>执行状态</th>
+                <th>使用控制</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="gb-tbody">
+              <tr><td colspan="10" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-gb-prev" class="btn btn-ghost">上一页</button>
+            <span id="gb-page-info">第 1 页</span>
+            <button id="btn-gb-next" class="btn btn-ghost">下一页</button>
+            <select id="gb-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
+      <!-- ========== 用户优惠券 ========== -->
+      <section class="page hidden" id="page-user-coupons">
+        <header class="topbar">
+          <h1>用户优惠券</h1>
+        </header>
+
+        <section class="filter">
+          <div class="filter-item">
+            <label>手机号</label>
+            <input id="uc-f-phone" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>用户 ID</label>
+            <input id="uc-f-user-id" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>优惠券 ID</label>
+            <input id="uc-f-coupon-id" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>批次编号</label>
+            <input id="uc-f-batch-no" type="text" />
+          </div>
+          <button id="btn-uc-search" class="btn">查询</button>
+          <button id="btn-uc-reset" class="btn btn-ghost">重置</button>
+        </section>
+
+        <section class="list">
+          <table>
+            <thead>
+              <tr>
+                <th>用户 ID</th>
+                <th>用户名</th>
+                <th>手机号</th>
+                <th>优惠券名称</th>
+                <th>批次编号</th>
+                <th>发放方式</th>
+                <th>立减金额</th>
+                <th>生效时间</th>
+                <th>失效时间</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="uc-tbody">
+              <tr><td colspan="10" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-uc-prev" class="btn btn-ghost">上一页</button>
+            <span id="uc-page-info">第 1 页</span>
+            <button id="btn-uc-next" class="btn btn-ghost">下一页</button>
+            <select id="uc-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
     </main>
+  </div>
+
+  <!-- ========== 优惠券 新建/编辑 弹窗 ========== -->
+  <div id="modal-coupon" class="modal hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2 id="modal-coupon-title">新建优惠券</h2>
+        <button class="modal-close" data-close="modal-coupon">×</button>
+      </header>
+      <form id="coupon-form" class="form">
+        <input type="hidden" id="f-coupon-id" />
+        <div class="form-row">
+          <label>优惠券名称 *</label>
+          <input id="f-coupon-name" type="text" required maxlength="100" />
+        </div>
+        <div class="form-row">
+          <label>券类型 *</label>
+          <select id="f-coupon-type" required>
+            <option value="1">立减券</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>立减金额（元）*</label>
+          <input id="f-coupon-amount" type="number" required min="0.01" step="0.01" placeholder="例如 5 表示立减 5 元" />
+          <span class="hint">单位元，提交时自动换算为分</span>
+        </div>
+        <div class="form-row">
+          <label>适用 SPU ID 列表 *</label>
+          <textarea id="f-coupon-spu-ids" rows="4" placeholder="换行或逗号分隔，自动去空去重"></textarea>
+          <span class="hint">使用范围类型本期固定为「指定 SPU」</span>
+        </div>
+        <div class="form-row">
+          <label>有效期类型 *</label>
+          <select id="f-coupon-valid-type" required>
+            <option value="1">绝对有效期</option>
+            <option value="2">相对有效期</option>
+          </select>
+        </div>
+        <div id="cp-valid-abs">
+          <div class="form-row">
+            <label>开始时间 *</label>
+            <input id="f-coupon-valid-start" type="datetime-local" />
+          </div>
+          <div class="form-row">
+            <label>结束时间 *</label>
+            <input id="f-coupon-valid-end" type="datetime-local" />
+          </div>
+        </div>
+        <div id="cp-valid-rel" class="hidden">
+          <div class="form-row">
+            <label>发放后有效天数</label>
+            <input id="f-coupon-valid-days" type="number" min="0" value="0" />
+          </div>
+          <div class="form-row">
+            <label>额外有效小时数</label>
+            <input id="f-coupon-valid-hours" type="number" min="0" value="0" />
+            <span class="hint">天 + 小时至少一个大于 0</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>总库存</label>
+          <input id="f-coupon-stock" type="number" min="1" />
+          <span class="hint">选填；留空默认 9999999</span>
+        </div>
+        <div class="form-row">
+          <label>单用户发放数量限制</label>
+          <input id="f-coupon-limit" type="number" min="1" />
+          <span class="hint">选填；留空默认 1 张</span>
+        </div>
+        <div class="form-row">
+          <label>内部备注</label>
+          <input id="f-coupon-remark" type="text" maxlength="200" />
+        </div>
+        <div class="form-row" id="cp-create-only">
+          <label>
+            <input id="f-coupon-online" type="checkbox" />
+            创建后直接上线（不勾选则保存为未上线）
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-coupon">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== 优惠券 详情 弹窗 ========== -->
+  <div id="modal-coupon-detail" class="modal hidden">
+    <div class="modal-content modal-large">
+      <header class="modal-header">
+        <h2>优惠券详情</h2>
+        <button class="modal-close" data-close="modal-coupon-detail">×</button>
+      </header>
+      <div id="cp-detail-body" class="detail-rows"></div>
+    </div>
+  </div>
+
+  <!-- ========== 优惠券 修改状态 弹窗 ========== -->
+  <div id="modal-coupon-status" class="modal hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2>修改优惠券状态</h2>
+        <button class="modal-close" data-close="modal-coupon-status">×</button>
+      </header>
+      <form id="coupon-status-form" class="form">
+        <input type="hidden" id="f-cs-coupon-id" />
+        <div class="form-row">
+          <label>目标状态 *</label>
+          <select id="f-cs-status" required>
+            <option value="2">上线</option>
+            <option value="3">下线</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>变更原因 *</label>
+          <textarea id="f-cs-reason" rows="3" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-coupon-status">取消</button>
+          <button type="submit" class="btn btn-primary">确认</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== 发放批次 详情 弹窗 ========== -->
+  <div id="modal-grant-batch" class="modal hidden">
+    <div class="modal-content modal-large">
+      <header class="modal-header">
+        <h2>发放批次详情</h2>
+        <button class="modal-close" data-close="modal-grant-batch">×</button>
+      </header>
+      <div class="form">
+        <div id="gb-detail-info" class="detail-rows" style="padding: 0;"></div>
+        <h3 class="section-title">发放明细</h3>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>用户 ID</th>
+                <th>手机号</th>
+                <th>优惠券 ID</th>
+                <th>用户券 ID</th>
+                <th>发放结果</th>
+                <th>原因</th>
+                <th>发放时间</th>
+              </tr>
+            </thead>
+            <tbody id="gbr-tbody">
+              <tr><td colspan="7" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button id="btn-gbr-prev" class="btn btn-ghost">上一页</button>
+          <span id="gbr-page-info">第 1 页</span>
+          <button id="btn-gbr-next" class="btn btn-ghost">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 停用发放批次 弹窗 ========== -->
+  <div id="modal-disable-batch" class="modal hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2>停用发放批次</h2>
+        <button class="modal-close" data-close="modal-disable-batch">×</button>
+      </header>
+      <form id="disable-batch-form" class="form">
+        <input type="hidden" id="f-db-batch-id" />
+        <div class="hint" style="margin-bottom: 12px;">
+          停用后：已发放的券会作废，未发放的不再发放。该操作不可恢复，请谨慎操作。
+        </div>
+        <div class="form-row">
+          <label>停用原因 *</label>
+          <textarea id="f-db-reason" rows="3" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-disable-batch">取消</button>
+          <button type="submit" class="btn btn-danger">确认停用</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- ========== 卡券 新建/编辑 弹窗 ========== -->
@@ -789,6 +1257,7 @@
   <script src="/incentive.js"></script>
   <script src="/exp.js"></script>
   <script src="/migrate.js"></script>
+  <script src="/coupon.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ module.exports = {
   // 线上接口域名
   //  BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4b_yuFQAa5oiMUsE2kaCHNZaeec66d242c056bb9d0c2f3f15f7b056'
+  COOKIE: 'ExpirePage=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_LOGINLIST=https://hr.ihuman.pwrdgp.com/ps; PS_TOKENEXPIRE=24_Aug_2026_09:12:04_GMT; PS_TOKEN=rAAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4Adwg4AC4AMQAwABTnl10AxlsZnLpfin7WEfh51PXgCmwAAAAFAFNkYXRhYHicHYpNCkBQGEWPnwwN7YKeF2IDMhRGJjKQKAxtzuLc3lf3nHvre4Ew8D1P/nzcJTsrDxcbNzsnh9vRTMdI3AstE4vmQGExWCpSuRYtpes5mWJFQyE2stGfUeMHjJUOVQ==; PS_TokenSite=https://hr.ihuman.pwrdgp.com/psc/ps/?hr.ihuman.pwrdgp.com-PORTAL-PSJSESSIONID; PS_DEVICEFEATURES=new:1; SignOnDefault=; PS_LASTSITE=https://hr.ihuman.pwrdgp.com/psc/ps/; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMlrzFyKk4vkaWY3m6-cMF4bwQ4P2-7WhLhh_L_D7xIXPb5ed4b2b2dabe445a8f18d540695cd85'
       ,
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录

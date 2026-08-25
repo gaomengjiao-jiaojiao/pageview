@@ -18,7 +18,7 @@ document.querySelectorAll('.modal').forEach(modal => {
 // 路由切换：根据 hash 显示对应页面，更新侧边栏激活状态
 function switchPage(page) {
   // 默认到 cards
-  const validPages = ['cards', 'goods', 'send-card', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate'];
+  const validPages = ['cards', 'goods', 'send-card', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate', 'coupons', 'coupon-grant', 'user-coupons'];
   if (!validPages.includes(page)) page = 'cards';
 
   document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -31,6 +31,12 @@ function switchPage(page) {
   // 切换到该页时再拉数据，避免无谓的初始请求
   if (page === 'cards') window.Cards.loadCardList();
   if (page === 'goods') window.Goods.loadGoodsList();
+  if (page === 'coupons') window.Coupon.loadCouponList();
+  if (page === 'coupon-grant') {
+    window.CouponGrant.loadGrantOptions();
+    window.CouponGrant.loadBatchList();
+  }
+  if (page === 'user-coupons') window.UserCoupon.loadUserCouponList();
 }
 
 function currentPageFromHash() {
@@ -50,4 +56,7 @@ window.SendGold.initSendGold();
 window.SendGoldBatch.initSendGoldBatch();
 window.SendExp.initSendExp();
 window.LiveStudyMigrate.initLiveStudyMigrate();
+window.Coupon.initCouponPage();
+window.CouponGrant.initGrantPage();
+window.UserCoupon.initUserCouponPage();
 switchPage(currentPageFromHash());
