@@ -22,7 +22,7 @@ const COUPON_API = {
 const COUPON_TYPE_LABEL = { 0: '-', 1: '立减券', 2: '满减券', 3: '折扣券' };
 const OVERALL_STATUS_LABEL = { 0: '-', 1: '未上线', 2: '上线', 3: '下线' };
 const GRANT_TYPE_LABEL = { 0: '-', 1: '运营手动', 2: '系统自动' };
-const EXECUTE_STATUS_LABEL = { 0: '-', 1: '待执行', 2: '执行中', 3: '完成', 4: '部分失败', 5: '结果未知' };
+const EXECUTE_STATUS_LABEL = { 0: '-', 1: '待执行', 2: '执行中', 3: '完成', 4: '部分失败', 5: '结果未知', 6: '全部失败' };
 const USE_STATUS_LABEL = { 0: '-', 1: '启用', 2: '停用' };
 const GRANT_RECORD_STATUS_LABEL = { 0: '-', 1: '待处理', 2: '成功', 3: '失败', 4: '跳过' };
 const USER_COUPON_STATUS_LABEL = { 0: '-', 1: '可用', 2: '锁定', 3: '已使用', 4: '已过期', 5: '作废' };
@@ -96,7 +96,8 @@ function overallStatusTag(status) {
 
 function executeStatusTag(s) {
   if (!EXECUTE_STATUS_LABEL[s] || Number(s) === 0) return '-';
-  const cls = Number(s) === 3 ? 'tag-on' : (Number(s) === 4 ? 'tag-off' : (Number(s) === 2 ? 'tag-info' : 'tag-warn'));
+  const n = Number(s);
+  const cls = n === 3 ? 'tag-on' : ((n === 4 || n === 6) ? 'tag-off' : (n === 2 ? 'tag-info' : 'tag-warn'));
   return `<span class="tag ${cls}">${EXECUTE_STATUS_LABEL[s]}</span>`;
 }
 
@@ -134,7 +135,7 @@ function couponValidText(c) {
 function grantScopeText(rule) {
   if (!rule) return '-';
   const parts = [];
-  if (rule.spu_ids && rule.spu_ids.length) parts.push(`SPU: ${rule.spu_ids.join('、')}`);
+  if (rule.course_ids && rule.course_ids.length) parts.push(`课程ID: ${rule.course_ids.join('、')}`);
   if (rule.user_ids && rule.user_ids.length) parts.push(`用户: ${rule.user_ids.join('、')}`);
   if (rule.phones && rule.phones.length) parts.push(`手机号: ${rule.phones.join('、')}`);
   return parts.join('\n') || '-';
@@ -521,7 +522,7 @@ async function submitGrantForm(e) {
   const couponIds = Array.from(
     document.querySelectorAll('#grant-coupon-options input:checked')).map(i => i.value);
   const grantType = Number(document.getElementById('f-grant-type').value);
-  const spuIds = parseIdList(document.getElementById('f-grant-spu-ids').value);
+  const courseIds = parseIdList(document.getElementById('f-grant-course-ids').value);
   const userIds = parseIdList(document.getElementById('f-grant-user-ids').value);
   const phones = parseIdList(document.getElementById('f-grant-phones').value);
   const validStart = localInputToTs(document.getElementById('f-grant-valid-start').value);
@@ -529,8 +530,8 @@ async function submitGrantForm(e) {
   const reason = document.getElementById('f-grant-reason').value.trim();
 
   if (!couponIds.length) { _C.toast('请至少选择一张优惠券', 'error'); return; }
-  if (!spuIds.length && !userIds.length && !phones.length) {
-    _C.toast('发放范围（SPU/用户ID/手机号）至少填一种', 'error'); return;
+  if (!courseIds.length && !userIds.length && !phones.length) {
+    _C.toast('发放范围（课程ID/用户ID/手机号）至少填一种', 'error'); return;
   }
   // 批次有效期选填：留空跟随券模板有效期；填写则起止必须同时填且失效晚于生效
   if ((validStart || validEnd) && !(validStart && validEnd)) {
@@ -540,7 +541,7 @@ async function submitGrantForm(e) {
   if (!reason) { _C.toast('请填写发券原因', 'error'); return; }
 
   const grantScopeRule = {};
-  if (spuIds.length) grantScopeRule.spu_ids = spuIds;
+  if (courseIds.length) grantScopeRule.course_ids = courseIds;
   if (userIds.length) grantScopeRule.user_ids = userIds;
   if (phones.length) grantScopeRule.phones = phones;
 
@@ -800,7 +801,7 @@ const userCouponState = {
   page: 1,
   pageSize: 20,
   total: 0,
-  filter: { phone: '', user_id: '', coupon_id: '', batch_no: '' },
+  filter: { phone: '', user_id: '', coupon_id: '', batch_no: '', batch_id: '', status: 0 },
 };
 
 async function loadUserCouponList() {
@@ -810,6 +811,8 @@ async function loadUserCouponList() {
   if (f.user_id) body.user_id = f.user_id;
   if (f.coupon_id) body.coupon_id = f.coupon_id;
   if (f.batch_no) body.batch_no = f.batch_no;
+  if (f.batch_id) body.batch_id = f.batch_id;
+  if (f.status) body.status = Number(f.status);
   try {
     const resp = await _C.post(COUPON_API.LIST_USER_COUPONS, body);
     const list = (resp.data && resp.data.list) || [];
@@ -825,7 +828,7 @@ async function loadUserCouponList() {
 function renderUserCouponList(list) {
   const tbody = document.getElementById('uc-tbody');
   if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="10" class="empty">暂无数据</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" class="empty">暂无数据</td></tr>';
     return;
   }
   tbody.innerHTML = list.map(item => `
@@ -835,6 +838,7 @@ function renderUserCouponList(list) {
       <td>${_C.esc(item.phone || '-')}</td>
       <td>${_C.esc(item.coupon_name)}</td>
       <td>${_C.esc(item.batch_no || '-')}</td>
+      <td>${_C.esc(item.batch_id || '-')}</td>
       <td>${_C.esc(GRANT_TYPE_LABEL[item.grant_type] || item.grant_type)}</td>
       <td>${_C.esc(fenToYuanText(item.discount_amount))}</td>
       <td>${_C.esc(fmtTime(item.valid_start_at))}</td>
@@ -851,6 +855,8 @@ function initUserCouponPage() {
       user_id: document.getElementById('uc-f-user-id').value.trim(),
       coupon_id: document.getElementById('uc-f-coupon-id').value.trim(),
       batch_no: document.getElementById('uc-f-batch-no').value.trim(),
+      batch_id: document.getElementById('uc-f-batch-id').value.trim(),
+      status: Number(document.getElementById('uc-f-status').value) || 0,
     };
     userCouponState.page = 1;
     loadUserCouponList();
@@ -860,7 +866,9 @@ function initUserCouponPage() {
     document.getElementById('uc-f-user-id').value = '';
     document.getElementById('uc-f-coupon-id').value = '';
     document.getElementById('uc-f-batch-no').value = '';
-    userCouponState.filter = { phone: '', user_id: '', coupon_id: '', batch_no: '' };
+    document.getElementById('uc-f-batch-id').value = '';
+    document.getElementById('uc-f-status').value = '0';
+    userCouponState.filter = { phone: '', user_id: '', coupon_id: '', batch_no: '', batch_id: '', status: 0 };
     userCouponState.page = 1;
     loadUserCouponList();
   });

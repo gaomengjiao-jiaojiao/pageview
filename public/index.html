@@ -671,6 +671,7 @@
               <option value="3">完成</option>
               <option value="4">部分失败</option>
               <option value="5">结果未知</option>
+              <option value="6">全部失败</option>
             </select>
           </div>
           <div class="filter-item">
@@ -742,6 +743,21 @@
             <label>批次编号</label>
             <input id="uc-f-batch-no" type="text" />
           </div>
+          <div class="filter-item">
+            <label>批次 ID</label>
+            <input id="uc-f-batch-id" type="text" />
+          </div>
+          <div class="filter-item">
+            <label>状态</label>
+            <select id="uc-f-status">
+              <option value="0">全部</option>
+              <option value="1">可用</option>
+              <option value="2">锁定</option>
+              <option value="3">已使用</option>
+              <option value="4">已过期</option>
+              <option value="5">作废</option>
+            </select>
+          </div>
           <button id="btn-uc-search" class="btn">查询</button>
           <button id="btn-uc-reset" class="btn btn-ghost">重置</button>
         </section>
@@ -755,6 +771,7 @@
                 <th>手机号</th>
                 <th>优惠券名称</th>
                 <th>批次编号</th>
+                <th>批次 ID</th>
                 <th>发放方式</th>
                 <th>立减金额</th>
                 <th>生效时间</th>
@@ -763,7 +780,7 @@
               </tr>
             </thead>
             <tbody id="uc-tbody">
-              <tr><td colspan="10" class="empty">暂无数据</td></tr>
+              <tr><td colspan="11" class="empty">暂无数据</td></tr>
             </tbody>
           </table>
 
@@ -929,8 +946,8 @@
           </select>
         </div>
         <div class="form-row">
-          <label>指定 SPU（按 SPU 解析目标用户）</label>
-          <textarea id="f-grant-spu-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
+          <label>指定课程 ID（按课程解析目标用户）</label>
+          <textarea id="f-grant-course-ids" rows="3" placeholder="换行或逗号分隔，选填"></textarea>
         </div>
         <div class="form-row">
           <label>指定用户 ID 列表</label>
