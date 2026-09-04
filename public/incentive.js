@@ -69,6 +69,160 @@ async function submitSendCard(e) {
   }
 }
 
+// ========== 批量发卡 ==========
+
+let cardBatchCancelled = false;
+
+function collectCardBatchForm() {
+  const userIds = parseBatchUserIds(document.getElementById('icb-user-ids').value);
+  const body = {
+    card_id: document.getElementById('icb-card-id').value.trim(),
+    card_source_type: Number(document.getElementById('icb-source-type').value),
+  };
+  const subId = document.getElementById('icb-source-sub-id').value.trim();
+  const sourceId = document.getElementById('icb-source-id').value.trim();
+  const desc = document.getElementById('icb-source-desc').value.trim();
+  const remark = document.getElementById('icb-remark').value.trim();
+  if (subId) body.card_source_sub_id = subId;
+  if (sourceId) body.card_source_id = sourceId;
+  if (desc) body.card_source_desc = desc;
+  if (remark) body.remark = remark;
+  return { userIds, body };
+}
+
+function renderCardBatchProgress(done, total) {
+  const bar = document.getElementById('icb-progress-bar');
+  const text = document.getElementById('icb-progress-text');
+  bar.max = Math.max(total, 1);
+  bar.value = done;
+  text.textContent = `${done} / ${total}`;
+}
+
+function appendCardBatchRow(idx, userId, ok, data, errMsg) {
+  const tbody = document.querySelector('#icb-result-table tbody');
+  const tr = document.createElement('tr');
+  const resultCell = ok
+    ? `<td class="ok">成功</td>`
+    : `<td class="err">失败</td>`;
+  const infoCell = ok
+    ? `<td>${(data && data.user_card_id) || '-'}</td>`
+    : `<td>-</td>`;
+  tr.innerHTML = `
+    <td>${idx}</td>
+    <td>${_I.esc(userId)}</td>
+    ${resultCell}
+    ${infoCell}
+    <td>${_I.esc(errMsg || '')}</td>
+  `;
+  tr.className = ok ? 'row-ok' : 'row-err';
+  tbody.appendChild(tr);
+}
+
+function showCardBatchSummary(total, success, fail) {
+  const el = document.getElementById('icb-summary');
+  el.textContent = `共 ${total} 人，成功 ${success}，失败 ${fail}`;
+}
+
+function exportCardBatchCsv() {
+  const rows = [['序号', '用户ID', '结果', '用户卡片ID', '错误信息']];
+  document.querySelectorAll('#icb-result-table tbody tr').forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    rows.push([
+      cells[0]?.textContent || '',
+      cells[1]?.textContent || '',
+      cells[2]?.textContent || '',
+      cells[3]?.textContent || '',
+      cells[4]?.textContent || '',
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `batch_card_${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// 并发池：最多 concurrency 个请求在飞，失败继续，支持取消
+async function runCardBatchPool(userIds, baseBody, idemPrefix, concurrency, onItem) {
+  let cursor = 0;
+  let done = 0;
+  const total = userIds.length;
+  const workers = [];
+  const N = Math.min(concurrency, total);
+
+  async function worker() {
+    while (cursor < userIds.length && !cardBatchCancelled) {
+      const idx = cursor++;
+      const userId = userIds[idx];
+      const body = { ...baseBody, user_id: userId };
+      if (idemPrefix) body.idempotency_key = `${idemPrefix}_${userId}`;
+      let ok = false, data = null, errMsg = '';
+      try {
+        const resp = await _I.post(INCENTIVE_API.SEND_CARD, body);
+        data = resp.data || {};
+        ok = true;
+      } catch (err) {
+        errMsg = err.message || String(err);
+      }
+      onItem(idx, userId, ok, data, errMsg);
+      done++;
+      renderCardBatchProgress(done, total);
+    }
+  }
+
+  for (let i = 0; i < N; i++) workers.push(worker());
+  await Promise.all(workers);
+}
+
+async function submitSendCardBatch(e) {
+  e.preventDefault();
+  const { userIds, body } = collectCardBatchForm();
+  if (!userIds.length) { _I.toast('请填写用户ID列表', 'error'); return; }
+  if (!body.card_id) { _I.toast('请填写卡片ID', 'error'); return; }
+
+  const idemPrefix = document.getElementById('icb-idempotency-key').value.trim();
+  const concurrency = Math.max(1, Math.min(20, Number(document.getElementById('icb-concurrency').value) || 5));
+
+  // 重置 UI
+  cardBatchCancelled = false;
+  document.querySelector('#icb-result-table tbody').innerHTML = '';
+  document.getElementById('icb-export').classList.add('hidden');
+  document.getElementById('icb-cancel').classList.remove('hidden');
+  document.getElementById('icb-summary').textContent = '';
+  renderCardBatchProgress(0, userIds.length);
+
+  let success = 0, fail = 0;
+  const startBtn = e.target.querySelector('button[type="submit"]');
+  startBtn.disabled = true;
+
+  try {
+    await runCardBatchPool(userIds, body, idemPrefix, concurrency, (idx, userId, ok, data, errMsg) => {
+      appendCardBatchRow(idx + 1, userId, ok, data, errMsg);
+      if (ok) success++; else fail++;
+    });
+  } finally {
+    startBtn.disabled = false;
+    document.getElementById('icb-cancel').classList.add('hidden');
+    showCardBatchSummary(userIds.length, success, fail);
+    if (fail > 0 || success > 0) document.getElementById('icb-export').classList.remove('hidden');
+    if (cardBatchCancelled) _I.toast('已取消', 'info');
+    else _I.toast(`完成：成功 ${success}，失败 ${fail}`, success && !fail ? 'success' : 'info');
+  }
+}
+
+function cancelCardBatch() {
+  cardBatchCancelled = true;
+}
+
+function initSendCardBatch() {
+  document.getElementById('form-send-card-batch').addEventListener('submit', submitSendCardBatch);
+  document.getElementById('icb-cancel').addEventListener('click', cancelCardBatch);
+  document.getElementById('icb-export').addEventListener('click', exportCardBatchCsv);
+}
+
 // ========== 发金币 ==========
 
 function collectGoldForm() {
@@ -290,5 +444,6 @@ function initSendGold() {
 }
 
 window.SendCard = { initSendCard };
+window.SendCardBatch = { initSendCardBatch };
 window.SendGold = { initSendGold };
 window.SendGoldBatch = { initSendGoldBatch };

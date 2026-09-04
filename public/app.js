@@ -18,7 +18,7 @@ document.querySelectorAll('.modal').forEach(modal => {
 // 路由切换：根据 hash 显示对应页面，更新侧边栏激活状态
 function switchPage(page) {
   // 默认到 cards
-  const validPages = ['cards', 'goods', 'send-card', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate', 'coupons', 'coupon-grant', 'user-coupons'];
+  const validPages = ['cards', 'goods', 'send-card', 'send-card-batch', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate', 'coupons', 'coupon-grant', 'user-coupons'];
   if (!validPages.includes(page)) page = 'cards';
 
   document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -52,6 +52,7 @@ window.addEventListener('hashchange', () => {
 window.Cards.initCards();
 window.Goods.initGoods();
 window.SendCard.initSendCard();
+window.SendCardBatch.initSendCardBatch();
 window.SendGold.initSendGold();
 window.SendGoldBatch.initSendGoldBatch();
 window.SendExp.initSendExp();

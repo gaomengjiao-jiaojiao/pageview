@@ -7,9 +7,8 @@
           <value>
             <TabSessionState>
               <option name="provider" value="claude" />
-              <option name="sessionId" value="442c5a5b-fbfd-416e-9a9f-c91c271d5378" />
               <option name="cwd" value="$PROJECT_DIR$" />
-              <option name="model" value="z-ai/glm-5.2[1m]" />
+              <option name="model" value="claude-sonnet-4-6" />
               <option name="permissionMode" value="bypassPermissions" />
               <option name="reasoningEffort" value="medium" />
             </TabSessionState>
