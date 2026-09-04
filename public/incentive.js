@@ -74,11 +74,11 @@ async function submitSendCard(e) {
 let cardBatchCancelled = false;
 
 function collectCardBatchForm() {
-  const userIds = parseBatchUserIds(document.getElementById('icb-user-ids').value);
+  const mode = document.getElementById('icb-batch-mode').value;
   const body = {
-    card_id: document.getElementById('icb-card-id').value.trim(),
     card_source_type: Number(document.getElementById('icb-source-type').value),
   };
+  const cardId = document.getElementById('icb-card-id').value.trim();
   const subId = document.getElementById('icb-source-sub-id').value.trim();
   const sourceId = document.getElementById('icb-source-id').value.trim();
   const desc = document.getElementById('icb-source-desc').value.trim();
@@ -87,7 +87,18 @@ function collectCardBatchForm() {
   if (sourceId) body.card_source_id = sourceId;
   if (desc) body.card_source_desc = desc;
   if (remark) body.remark = remark;
-  return { userIds, body };
+  if (cardId) body.card_id = cardId;
+
+  let items = [];
+  if (mode === 'multi-card') {
+    const userIds = parseBatchUserIds(document.getElementById('icb-user-ids').value);
+    const cardIds = parseBatchUserIds(document.getElementById('icb-card-ids').value);
+    items = userIds.flatMap(userId => cardIds.map(card_id => ({ user_id: userId, card_id })));
+  } else {
+    const userIds = parseBatchUserIds(document.getElementById('icb-user-ids').value);
+    items = userIds.map(userId => ({ user_id: userId, card_id: cardId }));
+  }
+  return { mode, items, body };
 }
 
 function renderCardBatchProgress(done, total) {
@@ -98,7 +109,7 @@ function renderCardBatchProgress(done, total) {
   text.textContent = `${done} / ${total}`;
 }
 
-function appendCardBatchRow(idx, userId, ok, data, errMsg) {
+function appendCardBatchRow(idx, userId, cardId, ok, data, errMsg) {
   const tbody = document.querySelector('#icb-result-table tbody');
   const tr = document.createElement('tr');
   const resultCell = ok
@@ -110,6 +121,7 @@ function appendCardBatchRow(idx, userId, ok, data, errMsg) {
   tr.innerHTML = `
     <td>${idx}</td>
     <td>${_I.esc(userId)}</td>
+    <td>${_I.esc(cardId)}</td>
     ${resultCell}
     ${infoCell}
     <td>${_I.esc(errMsg || '')}</td>
@@ -120,11 +132,11 @@ function appendCardBatchRow(idx, userId, ok, data, errMsg) {
 
 function showCardBatchSummary(total, success, fail) {
   const el = document.getElementById('icb-summary');
-  el.textContent = `共 ${total} 人，成功 ${success}，失败 ${fail}`;
+  el.textContent = `共 ${total} 条，成功 ${success}，失败 ${fail}`;
 }
 
 function exportCardBatchCsv() {
-  const rows = [['序号', '用户ID', '结果', '用户卡片ID', '错误信息']];
+  const rows = [['序号', '用户ID', '卡片ID', '结果', '用户卡片ID', '错误信息']];
   document.querySelectorAll('#icb-result-table tbody tr').forEach(tr => {
     const cells = tr.querySelectorAll('td');
     rows.push([
@@ -133,6 +145,7 @@ function exportCardBatchCsv() {
       cells[2]?.textContent || '',
       cells[3]?.textContent || '',
       cells[4]?.textContent || '',
+      cells[5]?.textContent || '',
     ]);
   });
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -146,19 +159,21 @@ function exportCardBatchCsv() {
 }
 
 // 并发池：最多 concurrency 个请求在飞，失败继续，支持取消
-async function runCardBatchPool(userIds, baseBody, idemPrefix, concurrency, onItem) {
+async function runCardBatchPool(items, baseBody, idemPrefix, concurrency, onItem) {
   let cursor = 0;
   let done = 0;
-  const total = userIds.length;
+  const total = items.length;
   const workers = [];
   const N = Math.min(concurrency, total);
 
   async function worker() {
-    while (cursor < userIds.length && !cardBatchCancelled) {
+    while (cursor < items.length && !cardBatchCancelled) {
       const idx = cursor++;
-      const userId = userIds[idx];
-      const body = { ...baseBody, user_id: userId };
-      if (idemPrefix) body.idempotency_key = `${idemPrefix}_${userId}`;
+      const item = items[idx];
+      const userId = item.user_id;
+      const cardId = item.card_id;
+      const body = { ...baseBody, user_id: userId, card_id: cardId };
+      if (idemPrefix) body.idempotency_key = `${idemPrefix}_${userId}_${cardId}`;
       let ok = false, data = null, errMsg = '';
       try {
         const resp = await _I.post(INCENTIVE_API.SEND_CARD, body);
@@ -167,7 +182,7 @@ async function runCardBatchPool(userIds, baseBody, idemPrefix, concurrency, onIt
       } catch (err) {
         errMsg = err.message || String(err);
       }
-      onItem(idx, userId, ok, data, errMsg);
+      onItem(idx, userId, cardId, ok, data, errMsg);
       done++;
       renderCardBatchProgress(done, total);
     }
@@ -179,9 +194,23 @@ async function runCardBatchPool(userIds, baseBody, idemPrefix, concurrency, onIt
 
 async function submitSendCardBatch(e) {
   e.preventDefault();
-  const { userIds, body } = collectCardBatchForm();
-  if (!userIds.length) { _I.toast('请填写用户ID列表', 'error'); return; }
-  if (!body.card_id) { _I.toast('请填写卡片ID', 'error'); return; }
+  let formData;
+  try {
+    formData = collectCardBatchForm();
+  } catch (err) {
+    _I.toast(err.message || '批量输入格式错误', 'error');
+    return;
+  }
+  const { mode, items, body } = formData;
+  if (!items.length) {
+    _I.toast(mode === 'multi-card' ? '请填写用户ID列表和卡片ID列表' : '请填写用户ID列表', 'error');
+    return;
+  }
+  if (mode !== 'multi-card' && !body.card_id) { _I.toast('请填写卡片ID', 'error'); return; }
+  if (items.some(item => !item.user_id || !item.card_id)) {
+    _I.toast('存在空的用户ID或卡片ID，请检查输入', 'error');
+    return;
+  }
 
   const idemPrefix = document.getElementById('icb-idempotency-key').value.trim();
   const concurrency = Math.max(1, Math.min(20, Number(document.getElementById('icb-concurrency').value) || 5));
@@ -192,21 +221,21 @@ async function submitSendCardBatch(e) {
   document.getElementById('icb-export').classList.add('hidden');
   document.getElementById('icb-cancel').classList.remove('hidden');
   document.getElementById('icb-summary').textContent = '';
-  renderCardBatchProgress(0, userIds.length);
+  renderCardBatchProgress(0, items.length);
 
   let success = 0, fail = 0;
   const startBtn = e.target.querySelector('button[type="submit"]');
   startBtn.disabled = true;
 
   try {
-    await runCardBatchPool(userIds, body, idemPrefix, concurrency, (idx, userId, ok, data, errMsg) => {
-      appendCardBatchRow(idx + 1, userId, ok, data, errMsg);
+    await runCardBatchPool(items, body, idemPrefix, concurrency, (idx, userId, cardId, ok, data, errMsg) => {
+      appendCardBatchRow(idx + 1, userId, cardId, ok, data, errMsg);
       if (ok) success++; else fail++;
     });
   } finally {
     startBtn.disabled = false;
     document.getElementById('icb-cancel').classList.add('hidden');
-    showCardBatchSummary(userIds.length, success, fail);
+    showCardBatchSummary(items.length, success, fail);
     if (fail > 0 || success > 0) document.getElementById('icb-export').classList.remove('hidden');
     if (cardBatchCancelled) _I.toast('已取消', 'info');
     else _I.toast(`完成：成功 ${success}，失败 ${fail}`, success && !fail ? 'success' : 'info');
@@ -217,10 +246,27 @@ function cancelCardBatch() {
   cardBatchCancelled = true;
 }
 
+function toggleCardBatchMode() {
+  const mode = document.getElementById('icb-batch-mode').value;
+  const userIds = document.getElementById('icb-user-ids');
+  const cardIdRow = document.getElementById('icb-card-id-row');
+  const cardId = document.getElementById('icb-card-id');
+  const cardIdsRow = document.getElementById('icb-card-ids-row');
+  const cardIds = document.getElementById('icb-card-ids');
+  const sameCard = mode === 'same-card';
+  userIds.required = true;
+  cardIdRow.classList.toggle('hidden', !sameCard);
+  cardId.required = sameCard;
+  cardIds.required = !sameCard;
+  cardIdsRow.classList.toggle('hidden', sameCard);
+}
+
 function initSendCardBatch() {
   document.getElementById('form-send-card-batch').addEventListener('submit', submitSendCardBatch);
+  document.getElementById('icb-batch-mode').addEventListener('change', toggleCardBatchMode);
   document.getElementById('icb-cancel').addEventListener('click', cancelCardBatch);
   document.getElementById('icb-export').addEventListener('click', exportCardBatchCsv);
+  toggleCardBatchMode();
 }
 
 // ========== 发金币 ==========
