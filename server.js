@@ -11,6 +11,7 @@ const url = require('url');
 const config = require('./config');
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const LISTEN_HOST = config.HOST || '0.0.0.0';
 
 // 常见静态文件扩展名 → MIME 类型映射
 const MIME_TYPES = {
@@ -205,8 +206,11 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(config.PORT, () => {
+server.listen(config.PORT, LISTEN_HOST, () => {
   console.log(`卡券管理后台已启动：http://localhost:${config.PORT}`);
+  console.log(`局域网访问地址：http://<你的IP>:${config.PORT}`);
+  console.log(`独立批量发卡页：http://<你的IP>:${config.PORT}/batch-card.html`);
+  console.log(`[listen] ${LISTEN_HOST}:${config.PORT}`);
   console.log(`接口代理 → ${config.BASE_URL}`);
   if (!config.COOKIE) {
     console.warn('[警告] 尚未配置 Cookie，调用线上接口可能会鉴权失败。请编辑 config.js。');

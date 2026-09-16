@@ -2,12 +2,14 @@
 module.exports = {
   // 本地静态服务监听端口
   PORT: 3000,
+  // 监听地址。给局域网其他人访问时用 0.0.0.0；只给自己本机用可改回 127.0.0.1
+  HOST: '0.0.0.0',
   // dev接口域名（不带末尾斜杠），例如 https://xxx.example.com
-  BASE_URL: 'https://aixue-dev.ihuman.pwrdgp.com',
+  // BASE_URL: 'https://aixue-dev.ihuman.pwrdgp.com',
   // 线上接口域名
-  //  BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
+   BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'ExpirePage=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_LOGINLIST=https://hr.ihuman.pwrdgp.com/ps; PS_TOKEN=qwAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4Adwg4AC4AMQAwABQnToY4wiweUL+rDiCwwqu5A8laXWsAAAAFAFNkYXRhX3icHYk7DkBQFESPT5RKu/DCixAbEKWg0ohChASlzVmc8WYyZzL3PkAY+J6nfn2cko2Fm5OVi42D3e1oomUg7oSGkVmzp7BkWEpSde2YO2YY3a1Y6GuU35ZK5gOMpA5g; PS_TokenSite=https://hr.ihuman.pwrdgp.com/psc/ps/?hr.ihuman.pwrdgp.com-PORTAL-PSJSESSIONID; PS_DEVICEFEATURES=new:1; SignOnDefault=; PS_LASTSITE=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_TOKENEXPIRE=1_Sep_2026_03:45:35_GMT; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMsXjc3UoeW4dnO3jckWm4WPr17cmX1-IgjXXrmaF1kPv87718b2afbaa9456df64f12967d23fd4'
+  COOKIE: 'ExpirePage=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_LOGINLIST=https://hr.ihuman.pwrdgp.com/ps; PS_TOKEN=qwAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4Adwg4AC4AMQAwABQnToY4wiweUL+rDiCwwqu5A8laXWsAAAAFAFNkYXRhX3icHYk7DkBQFESPT5RKu/DCixAbEKWg0ohChASlzVmc8WYyZzL3PkAY+J6nfn2cko2Fm5OVi42D3e1oomUg7oSGkVmzp7BkWEpSde2YO2YY3a1Y6GuU35ZK5gOMpA5g; PS_TokenSite=https://hr.ihuman.pwrdgp.com/psc/ps/?hr.ihuman.pwrdgp.com-PORTAL-PSJSESSIONID; PS_DEVICEFEATURES=new:1; SignOnDefault=; PS_LASTSITE=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_TOKENEXPIRE=10_Sep_2026_01:56:58_GMT; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMsXjc3UoeW4dnO3jckWm4WOaris3bE4WXv9KO0pQl58Ebf707880489257979bdbb51451f7ea3a'
       ,
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录
@@ -23,4 +25,3 @@ module.exports = {
   // 卡片图片上传到 COS 的对象 key 前缀（会自动补齐末尾 /）
   CARD_COS_KEY_PREFIX: '/incentive/card/',
 };
-

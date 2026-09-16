@@ -31,10 +31,12 @@ function updateCardImagePreviews() {
   const previewUrl = document.getElementById('f-card-preview-url').value.trim();
   const previewLockedUrl = document.getElementById('f-card-preview-url-locked').value.trim();
   const bigImageUrl = document.getElementById('f-card-big-image-url').value.trim();
+  const avatarImageUrl = document.getElementById('f-card-avatar-image-url').value.trim();
 
   const previewEl = document.getElementById('preview-url-preview');
   const lockedEl = document.getElementById('preview-url-locked-preview');
   const bigEl = document.getElementById('big-image-url-preview');
+  const avatarEl = document.getElementById('avatar-image-url-preview');
 
   if (previewUrl) {
     previewEl.innerHTML = `<img src="${appEsc(previewUrl)}" alt="已获得图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
@@ -52,6 +54,12 @@ function updateCardImagePreviews() {
     bigEl.innerHTML = `<img src="${appEsc(bigImageUrl)}" alt="图片大图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
   } else {
     bigEl.innerHTML = '';
+  }
+
+  if (avatarImageUrl) {
+    avatarEl.innerHTML = `<img src="${appEsc(avatarImageUrl)}" alt="头像图预览" onerror="this.parentElement.innerHTML='<span class=\\'img-error\\'>图片加载失败</span>'" />`;
+  } else {
+    avatarEl.innerHTML = '';
   }
 }
 
@@ -188,12 +196,14 @@ function collectCardFormBody() {
   const colorEnd = document.getElementById('f-card-color-end').value.trim();
   const bigImageUrl = document.getElementById('f-card-big-image-url').value.trim();
   const cardResLabel = document.getElementById('f-card-res-label').value.trim();
+  const avatarImageUrl = document.getElementById('f-card-avatar-image-url').value.trim();
 
   const extConfigObj = {};
   if (colorStart) extConfigObj.color_start = colorStart;
   if (colorEnd) extConfigObj.color_end = colorEnd;
   if (bigImageUrl) extConfigObj.big_image_url = bigImageUrl;
   if (cardResLabel) extConfigObj.card_res_label = cardResLabel;
+  if (avatarImageUrl) extConfigObj.avatar_image_url = avatarImageUrl;
 
   return {
     card_name: document.getElementById('f-card-name').value.trim(),
@@ -236,6 +246,7 @@ async function openCardEditModal(cardId) {
     document.getElementById('f-card-color-end').value = extConfig.color_end || '';
     document.getElementById('f-card-big-image-url').value = extConfig.big_image_url || '';
     document.getElementById('f-card-res-label').value = extConfig.card_res_label || '';
+    document.getElementById('f-card-avatar-image-url').value = extConfig.avatar_image_url || '';
     document.getElementById('f-card-first-type').value = card.card_first_type || 1;
     document.getElementById('f-card-second-type').value = card.card_second_type || 101;
     document.getElementById('f-card-preview-url').value = card.card_preview_url || '';
@@ -376,11 +387,12 @@ function initCards() {
     document.getElementById('preview-url-preview').innerHTML = '';
     document.getElementById('preview-url-locked-preview').innerHTML = '';
     document.getElementById('big-image-url-preview').innerHTML = '';
+    document.getElementById('avatar-image-url-preview').innerHTML = '';
     appOpenModal('modal-card');
   });
 
   // 图片 URL 输入框变化时更新预览
-  ['f-card-preview-url', 'f-card-preview-url-locked', 'f-card-big-image-url'].forEach(id => {
+  ['f-card-preview-url', 'f-card-preview-url-locked', 'f-card-big-image-url', 'f-card-avatar-image-url'].forEach(id => {
     document.getElementById(id).addEventListener('input', updateCardImagePreviews);
   });
 
@@ -405,6 +417,14 @@ function initCards() {
   document.getElementById('btn-upload-big-image').addEventListener('click', async () => {
     try {
       await handleCardImageUpload('f-card-big-image-file', 'f-card-big-image-url', '图片大图');
+      updateCardImagePreviews();
+    } catch (err) {
+      appToast('上传失败：' + err.message, 'error');
+    }
+  });
+  document.getElementById('btn-upload-avatar-image').addEventListener('click', async () => {
+    try {
+      await handleCardImageUpload('f-card-avatar-image-file', 'f-card-avatar-image-url', '头像图');
       updateCardImagePreviews();
     } catch (err) {
       appToast('上传失败：' + err.message, 'error');
