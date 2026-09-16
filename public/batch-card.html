@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>批量发卡</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .standalone-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+    .page-note {
+      margin: 16px 24px 0;
+      padding: 12px 16px;
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 4px;
+      color: #8c6d1f;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="standalone-wrap">
+    <header class="topbar">
+      <h1>批量发卡</h1>
+    </header>
+
+    <div class="page-note">
+      本页是独立入口，只保留批量发卡功能。
+      仍依赖同域 <code>/api/*</code> 代理，请通过当前项目的 <code>server.js</code> 打开，不要直接双击 HTML 文件。
+    </div>
+
+    <section class="section-card">
+      <form id="form-send-card-batch" class="form form-inline">
+        <div class="form-row">
+          <label>批量模式 *</label>
+          <select id="icb-batch-mode">
+            <option value="same-card">多个用户发同一张卡</option>
+            <option value="multi-card">多个用户发多张卡</option>
+          </select>
+        </div>
+        <div class="form-row" id="icb-user-ids-row">
+          <label>用户ID列表 *</label>
+          <textarea id="icb-user-ids" rows="6" required placeholder="每行一个用户ID，或用逗号/空格分隔"></textarea>
+          <span class="hint">每行一个或用逗号/空格分隔，自动去空格去重</span>
+        </div>
+        <div class="form-row hidden" id="icb-card-ids-row">
+          <label>卡片ID列表 *</label>
+          <textarea id="icb-card-ids" rows="6" placeholder="每行一个卡片ID，或用逗号/空格分隔"></textarea>
+          <span class="hint">会给用户ID列表里的每个用户发这里的所有卡片</span>
+        </div>
+        <div class="form-row" id="icb-card-id-row">
+          <label>卡片ID *</label>
+          <input id="icb-card-id" type="text" required placeholder="输入卡片ID" />
+          <span class="hint">同卡模式必填；多卡模式下自动隐藏</span>
+        </div>
+        <div class="form-row">
+          <label>来源类型 *</label>
+          <select id="icb-source-type" required>
+            <option value="100">手动补发</option>
+            <option value="1">宠物商城购买</option>
+            <option value="2">激活宠物赠送</option>
+            <option value="3">捕获Boss获得</option>
+            <option value="4">首次进入获得知知</option>
+            <option value="0">未知</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>来源业务子ID</label>
+          <input id="icb-source-sub-id" type="text" placeholder="选填，所有用户共用" />
+        </div>
+        <div class="form-row">
+          <label>来源业务ID</label>
+          <input id="icb-source-id" type="text" placeholder="选填，所有用户共用" />
+        </div>
+        <div class="form-row">
+          <label>来源描述</label>
+          <input id="icb-source-desc" type="text" placeholder="选填" />
+        </div>
+        <div class="form-row">
+          <label>备注</label>
+          <input id="icb-remark" type="text" placeholder="选填" />
+        </div>
+        <div class="form-row">
+          <label>幂等键前缀</label>
+          <input id="icb-idempotency-key" type="text" placeholder="选填，自动拼接用户和卡片信息" />
+          <span class="hint">填了则自动生成 前缀_用户ID_卡片ID；留空则不传</span>
+        </div>
+        <div class="form-row">
+          <label>并发数</label>
+          <input id="icb-concurrency" type="number" value="5" min="1" max="20" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">开始批量发卡</button>
+          <button type="button" id="icb-cancel" class="btn btn-ghost hidden">取消</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="section-card">
+      <div class="form-row" style="display:flex; align-items:center; gap:12px;">
+        <strong>进度：</strong>
+        <span id="icb-progress-text">未开始</span>
+      </div>
+      <progress id="icb-progress-bar" value="0" max="1" style="width:100%;"></progress>
+    </section>
+
+    <section class="section-card">
+      <div class="form-row" style="display:flex; align-items:center; gap:12px;">
+        <strong>结果：</strong>
+        <span id="icb-summary"></span>
+        <button type="button" id="icb-export" class="btn btn-ghost hidden">导出 CSV</button>
+      </div>
+      <table class="table" id="icb-result-table">
+        <thead>
+          <tr><th>序号</th><th>用户ID</th><th>卡片ID</th><th>结果</th><th>用户卡片ID</th><th>错误信息</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/runtime-config.js"></script>
+  <script src="/common.js"></script>
+  <script src="/incentive.js"></script>
+  <script>
+    window.SendCardBatch.initSendCardBatch();
+  </script>
+</body>
+</html>
