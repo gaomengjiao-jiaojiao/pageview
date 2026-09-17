@@ -45,6 +45,9 @@
         <a class="nav-item" data-page="user-coupons" href="#user-coupons">
           <span class="nav-icon">👥</span>用户优惠券
         </a>
+        <a class="nav-item" data-page="timechat" href="#timechat">
+          <span class="nav-icon">🏛️</span>超时空对话
+        </a>
       </nav>
     </aside>
 
@@ -895,6 +898,57 @@
         </section>
       </section>
 
+      <!-- ========== 超时空对话 · 历史人物 ========== -->
+      <section class="page hidden" id="page-timechat">
+        <header class="topbar">
+          <h1>超时空对话</h1>
+          <button id="btn-create-timechat" class="btn btn-primary">+ 新建历史人物</button>
+        </header>
+
+        <section class="filter">
+          <div class="filter-item">
+            <label>人物名称</label>
+            <input id="f-tc-filter-name" type="text" placeholder="模糊搜索" />
+          </div>
+          <div class="filter-item">
+            <label>朝代</label>
+            <input id="f-tc-filter-dynasty" type="text" placeholder="精确匹配，如 北宋" />
+          </div>
+          <button id="btn-tc-search" class="btn">查询</button>
+          <button id="btn-tc-reset" class="btn btn-ghost">重置</button>
+        </section>
+
+        <section class="list">
+          <table>
+            <thead>
+              <tr>
+                <th>人物 ID</th>
+                <th>人物图片</th>
+                <th>人物名称</th>
+                <th>朝代</th>
+                <th>知识库</th>
+                <th>课程解锁配置</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tc-tbody">
+              <tr><td colspan="7" class="empty">暂无数据</td></tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button id="btn-tc-prev" class="btn btn-ghost">上一页</button>
+            <span id="tc-page-info">第 1 页</span>
+            <button id="btn-tc-next" class="btn btn-ghost">下一页</button>
+            <select id="tc-page-size">
+              <option value="10">10 条/页</option>
+              <option value="20" selected>20 条/页</option>
+              <option value="50">50 条/页</option>
+            </select>
+          </div>
+        </section>
+      </section>
+
     </main>
   </div>
 
@@ -1379,6 +1433,119 @@
     </div>
   </div>
 
+  <!-- ========== 超时空对话 · 人物编辑弹窗 ========== -->
+  <div id="modal-timechat" class="modal hidden">
+    <div class="modal-content modal-large">
+      <header class="modal-header">
+        <h2 id="modal-tc-title">新建历史人物</h2>
+        <button class="modal-close" data-close="modal-timechat">×</button>
+      </header>
+      <form id="tc-form" class="form">
+        <input type="hidden" id="f-tc-id" />
+        <div id="tc-kb-status" class="hint"></div>
+
+        <div class="section-title">人物信息</div>
+        <div class="form-row">
+          <label>人物名称 *</label>
+          <input id="f-tc-name" type="text" required maxlength="64" placeholder="例如 范仲淹" />
+        </div>
+        <div class="form-row">
+          <label>朝代</label>
+          <input id="f-tc-dynasty" type="text" maxlength="32" placeholder="例如 北宋" />
+          <span class="hint">前端会拼成「（北宋）范仲淹」，填朝代名即可</span>
+        </div>
+        <div class="form-row">
+          <label>人物简介</label>
+          <textarea id="f-tc-description" rows="2" maxlength="256"
+            placeholder="例如 北宋政治家、文学家。"></textarea>
+        </div>
+
+        <div class="section-title">资源文件</div>
+        <div class="form-row">
+          <label>人物图片</label>
+          <input id="f-tc-avatar" type="text" placeholder="上传后自动填入 COS 路径" />
+          <div class="row-actions">
+            <input id="f-tc-file-avatar" type="file" accept="image/*" />
+            <button type="button" id="btn-tc-upload-avatar" class="btn">上传</button>
+            <span id="tc-file-hint-avatar" class="hint"></span>
+          </div>
+          <div id="tc-preview-avatar" class="img-preview"></div>
+        </div>
+        <div class="form-row">
+          <label>资源包</label>
+          <input id="f-tc-res-pack" type="text" placeholder="数字人资源包 COS 路径" />
+          <div class="row-actions">
+            <input id="f-tc-file-res_pack" type="file" accept=".zip,.rar,.7z" />
+            <button type="button" id="btn-tc-upload-res_pack" class="btn">上传</button>
+            <span id="tc-file-hint-res_pack" class="hint"></span>
+          </div>
+          <div id="tc-preview-res_pack"></div>
+        </div>
+        <div class="form-row">
+          <label>知识库文件</label>
+          <input id="f-tc-knowledge" type="text" placeholder="Excel / CSV 的 COS 路径" />
+          <div class="row-actions">
+            <input id="f-tc-file-knowledge" type="file" accept=".xlsx,.xls,.csv" />
+            <button type="button" id="btn-tc-upload-knowledge" class="btn">上传</button>
+            <span id="tc-file-hint-knowledge" class="hint"></span>
+          </div>
+          <div id="tc-preview-knowledge"></div>
+          <span class="hint">
+            第 1 列问题、第 2 列答案，表头可有可无；保存后自动解析，状态在列表查看
+          </span>
+        </div>
+
+        <div class="section-title">对话配置</div>
+        <div class="form-row">
+          <label>人物设定提示词</label>
+          <textarea id="f-tc-system-prompt" rows="5"
+            placeholder="你是北宋文学家范仲淹，请以沉稳、儒雅的口吻回答。"></textarea>
+        </div>
+        <div class="form-row">
+          <label>引导话术</label>
+          <textarea id="f-tc-greet" rows="2" maxlength="512"
+            placeholder="我是范仲淹，很高兴与你相见。"></textarea>
+        </div>
+
+        <div class="section-title">课程解锁配置</div>
+        <span class="hint">课次 ID 填 0 表示该课程下直接解锁；不配任何课程则人物不属于任何课程</span>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>课程 ID</th>
+              <th>解锁课次 ID</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tc-course-tbody"></tbody>
+        </table>
+        <div class="row-actions">
+          <button type="button" id="btn-tc-add-course" class="btn btn-ghost">+ 添加课程</button>
+        </div>
+
+        <div class="section-title">推荐问题</div>
+        <span class="hint">课上会从这些推荐问题里随机推送 3 个</span>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>问题内容</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tc-question-tbody"></tbody>
+        </table>
+        <div class="row-actions">
+          <button type="button" id="btn-tc-add-question" class="btn btn-ghost">+ 添加推荐问题</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" data-close="modal-timechat">取消</button>
+          <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <!-- 按依赖顺序加载：common 提供工具函数，cards/goods 是各模块，app 是入口 -->
@@ -1390,6 +1557,7 @@
   <script src="/exp.js"></script>
   <script src="/migrate.js"></script>
   <script src="/coupon.js"></script>
+  <script src="/timechat.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

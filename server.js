@@ -57,6 +57,11 @@ function sendAuthExpired(res, message) {
 function serveRuntimeConfig(res) {
   const runtimeConfig = {
     CARD_COS_KEY_PREFIX: config.CARD_COS_KEY_PREFIX || 'operation_api/card/',
+    TIMECHAT_COS_KEY_PREFIX: config.TIMECHAT_COS_KEY_PREFIX || {
+      avatar: '/resource/character/avatar/',
+      res_pack: '/resource/character/res_pack/',
+      knowledge: '/resource/character/knowledge/',
+    },
   };
   res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8' });
   res.end(`window.__APP_CONFIG__ = ${JSON.stringify(runtimeConfig)};`);
