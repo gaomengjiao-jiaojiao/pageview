@@ -9,8 +9,8 @@ module.exports = {
   // 线上接口域名
   //  BASE_URL: 'https://aixue.ihuman.pwrdgp.com',
   // 线上后台登录态 Cookie 字符串（从浏览器 DevTools 复制完整 Cookie 头）
-  COOKIE: 'ExpirePage=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_LOGINLIST=https://hr.ihuman.pwrdgp.com/ps; PS_TOKEN=qwAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4Adwg4AC4AMQAwABQnToY4wiweUL+rDiCwwqu5A8laXWsAAAAFAFNkYXRhX3icHYk7DkBQFESPT5RKu/DCixAbEKWg0ohChASlzVmc8WYyZzL3PkAY+J6nfn2cko2Fm5OVi42D3e1oomUg7oSGkVmzp7BkWEpSde2YO2YY3a1Y6GuU35ZK5gOMpA5g; PS_TokenSite=https://hr.ihuman.pwrdgp.com/psc/ps/?hr.ihuman.pwrdgp.com-PORTAL-PSJSESSIONID; PS_DEVICEFEATURES=new:1; SignOnDefault=; PS_LASTSITE=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_TOKENEXPIRE=15_Sep_2026_03:11:20_GMT; iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMsXjc3UoeW4dnO3jckWm4WMeMaSuVewurdXjVrOX1cadeb0c67c4b261ea04943af76b5b3c7fad'
-      ,
+  COOKIE: 'iPlanetDirectoryPro=pv9LYtjNAmK-n-JQbXCVMh5fLSrJy2eFxo7LcZCIngaJj1xycgcurNuH0AVz_P3dd68ff99f35ad95f93484763efe5d2d7d; ExpirePage=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_LOGINLIST=https://hr.ihuman.pwrdgp.com/ps; PS_TOKEN=rQAAAAQDAgEBAAAAvAIAAAAAAAAsAAAABABTaGRyAk4Adwg4AC4AMQAwABSITPQFAKhc4TKSjwx/N/hFI7r+u20AAAAFAFNkYXRhYXicHYo7DkBAEIa/RZRKt9iN93IBUQoqjShESFC6nMOZ7Ez+1/zzAoHvKSX6ebiJd1YeLjZudk4Ol8OZjpGoF2qZWCQOFBkJGRWaVJwW1M5bDLmsoZTW0LgvK5cKfo2HDmk=; PS_TokenSite=https://hr.ihuman.pwrdgp.com/psc/ps/?hr.ihuman.pwrdgp.com-PORTAL-PSJSESSIONID; SignOnDefault=; PS_LASTSITE=https://hr.ihuman.pwrdgp.com/psc/ps/; PS_TOKENEXPIRE=8_Oct_2026_01:53:20_GMT'
+  ,
 
   // 可选：公司内部 CA 根证书路径（PEM），相对本项目根目录
   // 推荐方案：导出公司 CA 并填这个路径，例如 './certs/wm-ca.pem'
