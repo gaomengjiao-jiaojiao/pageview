@@ -36,7 +36,10 @@ async function post(url, body) {
     code === undefined ||
     code === null;
   if (!ok || isErrorLikeMessage(data.message)) {
-    throw new Error(data.message || `业务错误：code=${code}`);
+    const error = new Error(data.message || `业务错误：code=${code}`);
+    error.code = code;
+    error.data = data.data;
+    throw error;
   }
   return data;
 }

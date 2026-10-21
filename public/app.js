@@ -18,7 +18,7 @@ document.querySelectorAll('.modal').forEach(modal => {
 // 路由切换：根据 hash 显示对应页面，更新侧边栏激活状态
 function switchPage(page) {
   // 默认到 cards
-  const validPages = ['cards', 'goods', 'send-card', 'send-card-batch', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate', 'coupons', 'coupon-grant', 'user-coupons', 'timechat'];
+  const validPages = ['cards', 'goods', 'send-card', 'send-card-batch', 'send-gold', 'send-gold-batch', 'send-exp', 'live-study-migrate', 'coupons', 'coupon-grant', 'user-coupons', 'timechat', 'spirits', 'spirit-pools', 'question-banks'];
   if (!validPages.includes(page)) page = 'cards';
 
   document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
@@ -38,6 +38,9 @@ function switchPage(page) {
   }
   if (page === 'user-coupons') window.UserCoupon.loadUserCouponList();
   if (page === 'timechat') window.Timechat.loadTimechatList();
+  if (page === 'spirits') window.Spirits.loadSpiritList();
+  if (page === 'spirit-pools') window.SpiritPools.loadPoolList();
+  if (page === 'question-banks') window.QuestionBanks.loadBankList();
 }
 
 function currentPageFromHash() {
@@ -62,4 +65,7 @@ window.Coupon.initCouponPage();
 window.CouponGrant.initGrantPage();
 window.UserCoupon.initUserCouponPage();
 window.Timechat.initTimechat();
+window.Spirits.initSpirits();
+window.SpiritPools.initSpiritPools();
+window.QuestionBanks.initQuestionBanks();
 switchPage(currentPageFromHash());

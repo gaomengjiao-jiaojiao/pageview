@@ -48,6 +48,15 @@
         <a class="nav-item" data-page="timechat" href="#timechat">
           <span class="nav-icon">🏛️</span>超时空对话
         </a>
+        <a class="nav-item" data-page="spirits" href="#spirits">
+          <span class="nav-icon">🧚</span>精灵管理
+        </a>
+        <a class="nav-item" data-page="spirit-pools" href="#spirit-pools">
+          <span class="nav-icon">🧩</span>精灵池管理
+        </a>
+        <a class="nav-item" data-page="question-banks" href="#question-banks">
+          <span class="nav-icon">📖</span>题库管理
+        </a>
       </nav>
     </aside>
 
@@ -202,6 +211,53 @@
             </select>
           </div>
         </section>
+      </section>
+
+      <!-- ========== 精灵管理 ========== -->
+      <section class="page hidden" id="page-spirits">
+        <header class="topbar">
+          <h1>精灵管理</h1>
+          <button id="btn-create-spirit" class="btn btn-primary">+ 新建精灵</button>
+        </header>
+        <section class="filter">
+          <div class="filter-item"><label>精灵名称</label><input id="spirit-filter-name" type="text" placeholder="模糊搜索"></div>
+          <div class="filter-item"><label>状态</label><select id="spirit-filter-status"><option value="0">全部</option><option value="1">启用</option><option value="2">禁用</option></select></div>
+          <button id="btn-spirit-search" class="btn">查询</button><button id="btn-spirit-reset" class="btn btn-ghost">重置</button>
+        </section>
+        <section class="list">
+          <table><thead><tr><th>ID</th><th>主体图</th><th>名称</th><th>血量系数</th><th>状态</th><th>关联卡牌</th><th>更新时间</th><th>操作</th></tr></thead>
+            <tbody id="spirit-tbody"><tr><td colspan="8" class="empty">暂无数据</td></tr></tbody></table>
+          <div class="pagination"><button id="btn-spirit-prev" class="btn btn-ghost">上一页</button><span id="spirit-page-info">第 1 页</span><button id="btn-spirit-next" class="btn btn-ghost">下一页</button><select id="spirit-page-size"><option value="10">10 条/页</option><option value="20" selected>20 条/页</option><option value="50">50 条/页</option></select></div>
+        </section>
+      </section>
+
+      <!-- ========== 精灵池管理 ========== -->
+      <section class="page hidden" id="page-spirit-pools">
+        <header class="topbar"><h1>精灵池管理</h1><button id="btn-create-pool" class="btn btn-primary">+ 新建精灵池</button></header>
+        <div class="module-tabs"><button type="button" class="module-tab active" data-pool-tab="pools">精灵池列表</button><button type="button" class="module-tab" data-pool-tab="binds">课次关联</button></div>
+        <div id="pool-list-panel">
+          <section class="filter">
+            <div class="filter-item"><label>精灵池名称</label><input id="pool-filter-name" type="text" placeholder="模糊搜索"></div>
+            <div class="filter-item"><label>精灵池 ID</label><input id="pool-filter-id" type="text"></div>
+            <div class="filter-item"><label>课程 ID</label><input id="pool-filter-course-id" type="text"></div>
+            <div class="filter-item"><label>课次 ID</label><input id="pool-filter-lesson-id" type="text"></div>
+            <button id="btn-pool-search" class="btn">查询</button><button id="btn-pool-reset" class="btn btn-ghost">重置</button>
+          </section>
+          <section class="list"><table><thead><tr><th>ID</th><th>名称</th><th>描述</th><th>精灵数</th><th>卡牌数</th><th>创建时间</th><th>操作</th></tr></thead><tbody id="pool-tbody"><tr><td colspan="7" class="empty">暂无数据</td></tr></tbody></table>
+            <div class="pagination"><button id="btn-pool-prev" class="btn btn-ghost">上一页</button><span id="pool-page-info">第 1 页</span><button id="btn-pool-next" class="btn btn-ghost">下一页</button><select id="pool-page-size"><option value="10">10 条/页</option><option value="20" selected>20 条/页</option><option value="50">50 条/页</option></select></div>
+          </section>
+        </div>
+        <div id="pool-bind-panel" class="hidden">
+          <section class="filter"><div class="filter-item"><label>精灵池 ID</label><input id="bind-filter-pool-id" type="text"></div><div class="filter-item"><label>课程 ID</label><input id="bind-filter-course-id" type="text"></div><div class="filter-item"><label>课次 ID</label><input id="bind-filter-lesson-id" type="text"></div><button id="btn-bind-search" class="btn">查询</button><button id="btn-bind-reset" class="btn btn-ghost">重置</button></section>
+          <section class="list"><table><thead><tr><th>池 ID</th><th>池名称</th><th>课程 ID</th><th>课程编号</th><th>课程名称</th><th>课次 ID</th><th>课次名称</th><th>课次类型</th></tr></thead><tbody id="pool-bind-tbody"><tr><td colspan="8" class="empty">暂无数据</td></tr></tbody></table><div class="pagination"><button id="btn-bind-prev" class="btn btn-ghost">上一页</button><span id="pool-bind-page-info">第 1 页</span><button id="btn-bind-next" class="btn btn-ghost">下一页</button></div></section>
+        </div>
+      </section>
+
+      <!-- ========== 题库管理 ========== -->
+      <section class="page hidden" id="page-question-banks">
+        <header class="topbar"><h1>题库管理</h1><div class="row-actions"><button id="btn-bank-template" class="btn">下载 Excel 模板</button><button id="btn-create-bank" class="btn btn-primary">+ 新建题库</button></div></header>
+        <section class="filter"><div class="filter-item"><label>年级</label><select id="bank-filter-grade"><option value="0">全部/不限</option><option value="1">一年级</option><option value="2">二年级</option><option value="3">三年级</option><option value="4">四年级</option><option value="5">五年级</option><option value="6">六年级</option></select></div><div class="filter-item"><label>题库名称</label><input id="bank-filter-keyword" type="text" placeholder="模糊搜索"></div><button id="btn-bank-search" class="btn">查询</button><button id="btn-bank-reset" class="btn btn-ghost">重置</button></section>
+        <section class="list"><table><thead><tr><th>ID</th><th>名称</th><th>年级</th><th>描述</th><th>题目数</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="bank-tbody"><tr><td colspan="7" class="empty">暂无数据</td></tr></tbody></table><div class="pagination"><button id="btn-bank-prev" class="btn btn-ghost">上一页</button><span id="bank-page-info">第 1 页</span><button id="btn-bank-next" class="btn btn-ghost">下一页</button><select id="bank-page-size"><option value="10">10 条/页</option><option value="20" selected>20 条/页</option><option value="50">50 条/页</option></select></div></section>
       </section>
 
       <!-- ========== 发卡片 ========== -->
@@ -1546,6 +1602,31 @@
     </div>
   </div>
 
+  <!-- ========== 精灵编辑 ========== -->
+  <div id="modal-spirit" class="modal hidden"><div class="modal-content modal-large"><div class="modal-header"><h2 id="modal-spirit-title">新建精灵</h2><button class="modal-close" data-close="modal-spirit">×</button></div><form id="spirit-form" class="form"><input id="spirit-form-id" type="hidden">
+    <div class="form-grid"><div class="form-row"><label>精灵名称 *</label><input id="spirit-name" required maxlength="128"></div><div class="form-row"><label>血量系数（0~200）</label><input id="spirit-hp" type="number" min="0" max="200" value="100" required></div><div class="form-row"><label>状态</label><select id="spirit-status"><option value="1">启用</option><option value="2">禁用</option></select></div></div>
+    <div class="form-row"><label>精灵主体图</label><div class="upload-line"><input id="spirit-image" type="text" placeholder="COS 对象路径"><input id="spirit-image-file" type="file" accept="image/*"><button type="button" id="btn-upload-spirit-image" class="btn">上传</button></div></div>
+    <div class="form-grid"><div class="form-row"><label>头像图</label><div class="upload-line"><input id="spirit-avatar-image" type="text" placeholder="COS 对象路径"><input id="spirit-avatar-file" type="file" accept="image/*"><button type="button" id="btn-upload-spirit-avatar" class="btn">上传</button></div></div><div class="form-row"><label>背景图</label><div class="upload-line"><input id="spirit-bg-image" type="text" placeholder="COS 对象路径"><input id="spirit-bg-file" type="file" accept="image/*"><button type="button" id="btn-upload-spirit-bg" class="btn">上传</button></div></div></div>
+    <div class="form-row"><label>大招动画素材</label><div class="upload-line"><input id="spirit-ultimate-res" type="text" placeholder="COS 对象路径"><input id="spirit-ultimate-file" type="file"><button type="button" id="btn-upload-spirit-ultimate" class="btn">上传</button></div></div>
+    <div class="form-row"><label>备注</label><textarea id="spirit-remark" rows="2" maxlength="500"></textarea></div>
+    <div class="section-title">关联卡牌（可选，卡牌只能归属一个精灵）</div><div class="table-wrap"><table><thead><tr><th>选择</th><th>ID</th><th>名称</th><th>稀有度</th><th>属性/占用情况</th></tr></thead><tbody id="spirit-card-tbody"><tr><td colspan="5" class="empty">加载中...</td></tr></tbody></table></div>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-spirit">取消</button><button type="submit" class="btn btn-primary">保存</button></div>
+  </form></div></div>
+
+  <!-- ========== 精灵池编辑 ========== -->
+  <div id="modal-spirit-pool" class="modal hidden"><div class="modal-content modal-large"><div class="modal-header"><h2 id="modal-pool-title">新建精灵池</h2><button class="modal-close" data-close="modal-spirit-pool">×</button></div><form id="pool-form" class="form"><input id="pool-form-id" type="hidden"><div class="form-row"><label>精灵池名称 *</label><input id="pool-name" required maxlength="128"></div><div class="form-row"><label>描述</label><textarea id="pool-description" rows="2" maxlength="500"></textarea></div><div class="section-title">池内精灵与卡牌 <span class="hint">至少 3 个不同精灵，每个精灵至少 1 张卡牌</span></div><div id="pool-spirit-rows"></div><button type="button" id="btn-add-pool-spirit" class="btn">+ 添加精灵</button><div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-spirit-pool">取消</button><button type="submit" class="btn btn-primary">保存</button></div></form></div></div>
+
+  <!-- ========== 精灵池课次绑定 ========== -->
+  <div id="modal-pool-bind" class="modal hidden"><div class="modal-content modal-large"><div class="modal-header"><h2 id="bind-pool-title">配置课次</h2><button class="modal-close" data-close="modal-pool-bind">×</button></div><form id="pool-bind-form" class="form"><div class="hint">精灵池 ID：<strong id="bind-pool-id"></strong>。保存时会全量替换该池的课次关联，全部移除可直接保存空列表。</div><div id="course-bind-rows" class="course-bind-list"></div><button type="button" id="btn-add-course-bind" class="btn">+ 添加课次</button><div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-pool-bind">取消</button><button type="submit" class="btn btn-primary">保存</button></div></form></div></div>
+
+  <!-- ========== 题库编辑/导入 ========== -->
+  <div id="modal-question-bank" class="modal hidden"><div class="modal-content"><div class="modal-header"><h2 id="modal-bank-title">新建题库</h2><button class="modal-close" data-close="modal-question-bank">×</button></div><form id="bank-form" class="form"><input id="bank-form-id" type="hidden"><div class="form-row"><label>题库名称 *</label><input id="bank-name" maxlength="128" required></div><div class="form-row"><label>年级</label><select id="bank-grade"><option value="0">不限年级</option><option value="1">一年级</option><option value="2">二年级</option><option value="3">三年级</option><option value="4">四年级</option><option value="5">五年级</option><option value="6">六年级</option></select></div><div class="form-row"><label>描述</label><textarea id="bank-description" rows="3" maxlength="500"></textarea></div><div id="bank-excel-row" class="form-row"><label>Excel 题目文件（.xlsx）*</label><input id="bank-excel-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"><span class="hint">请使用“下载 Excel 模板”得到的固定列顺序。</span></div><pre id="bank-import-errors" class="import-errors hidden"></pre><div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-question-bank">取消</button><button type="submit" class="btn btn-primary">保存</button></div></form></div></div>
+  <div id="modal-bank-import" class="modal hidden"><div class="modal-content"><div class="modal-header"><h2 id="import-bank-title">追加导入</h2><button class="modal-close" data-close="modal-bank-import">×</button></div><form id="bank-import-form" class="form"><div class="form-row"><label>Excel 题目文件（.xlsx）*</label><input id="import-bank-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"><span class="hint">导入失败时整体不写入，会展示逐行错误。</span></div><pre id="bank-append-errors" class="import-errors hidden"></pre><div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-bank-import">取消</button><button type="submit" class="btn btn-primary">上传并追加</button></div></form></div></div>
+
+  <!-- ========== 题库题目 ========== -->
+  <div id="modal-bank-questions" class="modal hidden"><div class="modal-content modal-large"><div class="modal-header"><h2 id="bank-question-title">题库题目</h2><button class="modal-close" data-close="modal-bank-questions">×</button></div><div class="form"><div class="filter compact-filter"><div class="filter-item"><label>题干</label><input id="question-filter-stem" type="text" placeholder="模糊搜索"></div><button id="btn-bank-question-search" class="btn">查询</button><button id="btn-remove-bank-questions" class="btn btn-danger">移除选中题目</button></div><div class="table-wrap"><table><thead><tr><th>选择</th><th>ID</th><th>题干</th><th>选项</th><th>答案</th><th>难度</th><th>操作</th></tr></thead><tbody id="bank-question-tbody"><tr><td colspan="7" class="empty">暂无数据</td></tr></tbody></table></div><div class="pagination"><button id="btn-bank-question-prev" class="btn btn-ghost">上一页</button><span id="question-page-info">第 1 页</span><button id="btn-bank-question-next" class="btn btn-ghost">下一页</button></div></div></div></div>
+  <div id="modal-question-edit" class="modal hidden"><div class="modal-content modal-large"><div class="modal-header"><h2>编辑题目</h2><button class="modal-close" data-close="modal-question-edit">×</button></div><form id="question-edit-form" class="form"><input id="question-edit-id" type="hidden"><div class="form-row"><label>题干 *</label><textarea id="question-stem" rows="3" required></textarea></div><div class="section-title">选项</div><div id="question-option-rows" class="question-option-list"></div><button type="button" id="btn-add-question-option" class="btn">+ 添加选项</button><div class="form-grid"><div class="form-row"><label>正确答案标签 *</label><input id="question-correct-answer" placeholder="例如 A" required></div><div class="form-row"><label>难度</label><select id="question-difficulty"><option value="1">1 - 容易</option><option value="2">2 - 较易</option><option value="3">3 - 一般</option><option value="4">4 - 较难</option><option value="5">5 - 困难</option></select></div></div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close="modal-question-edit">取消</button><button type="submit" class="btn btn-primary">保存</button></div></form></div></div>
+
   <div id="toast" class="toast hidden"></div>
 
   <!-- 按依赖顺序加载：common 提供工具函数，cards/goods 是各模块，app 是入口 -->
@@ -1558,6 +1639,9 @@
   <script src="/migrate.js"></script>
   <script src="/coupon.js"></script>
   <script src="/timechat.js"></script>
+  <script src="/spirits.js"></script>
+  <script src="/spirit-pools.js"></script>
+  <script src="/question-banks.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

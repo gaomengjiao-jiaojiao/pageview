@@ -234,6 +234,38 @@ tbody tr:hover { background: #fafbfc; }
   margin-top: 8px;
 }
 
+/* 新精灵卡牌游戏模块 */
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.form-grid .form-row { min-width: 0; }
+.upload-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.upload-line input[type='text'] { flex: 1; min-width: 180px; }
+.upload-line input[type='file'] { max-width: 240px; font-size: 12px; }
+.disabled-row { color: #aaa; background: #fafafa; }
+.module-tabs { display: flex; gap: 0; padding: 12px 24px 0; background: #fff; border-bottom: 1px solid #e8eaec; }
+.module-tab { padding: 10px 18px; border: 0; border-bottom: 2px solid transparent; background: transparent; cursor: pointer; color: #666; }
+.module-tab.active { color: #409eff; border-bottom-color: #409eff; font-weight: 600; }
+.pool-spirit-row { margin: 12px 0; padding: 12px; border: 1px solid #e8eaec; border-radius: 4px; background: #fafbfc; }
+.pool-spirit-head { display: flex; gap: 8px; margin-bottom: 8px; }
+.pool-spirit-head select { flex: 1; height: 32px; padding: 0 8px; border: 1px solid #dcdfe6; border-radius: 4px; background: #fff; }
+.check-list { display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px 16px; max-height: 180px; }
+.check-list label { white-space: nowrap; }
+.course-bind-list { margin: 16px 0 12px; }
+.course-bind-row { display: grid; grid-template-columns: 1fr 1fr 1.5fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.course-bind-row input { height: 32px; padding: 0 8px; border: 1px solid #dcdfe6; border-radius: 4px; }
+.course-bind-name { color: #666; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.question-stem { min-width: 220px; max-width: 320px; white-space: pre-wrap; word-break: break-word; }
+.question-option-list { margin-bottom: 12px; }
+.question-option-row { display: grid; grid-template-columns: 72px 1fr auto; gap: 8px; margin-bottom: 8px; }
+.question-option-row input { min-width: 0; height: 32px; padding: 0 8px; border: 1px solid #dcdfe6; border-radius: 4px; }
+.compact-filter { padding: 0 0 12px; border-bottom: 0; }
+.import-errors { margin: 8px 0; padding: 10px; max-height: 160px; overflow: auto; white-space: pre-wrap; color: #b42318; background: #fff1f0; border: 1px solid #ffccc7; border-radius: 4px; font-family: inherit; font-size: 12px; }
+.table-wrap { overflow-x: auto; }
+@media (max-width: 800px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .course-bind-row { grid-template-columns: 1fr 1fr; }
+  .course-bind-name { display: none; }
+}
+
 /* 选择器：输入框 + 按钮 */
 .picker { display: flex; gap: 8px; }
 .picker input { flex: 1; }
