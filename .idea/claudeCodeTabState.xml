@@ -8,8 +8,9 @@
             <TabSessionState>
               <option name="projectPath" value="C:\dev\pageview" />
               <option name="provider" value="claude" />
-              <option name="cwd" value="$PROJECT_DIR$" />
-              <option name="model" value="claude-sonnet-5" />
+              <option name="sessionId" value="592ca1b2-6479-48ed-85b1-bd78a79e4e72" />
+              <option name="cwd" value="C:\dev\pageview" />
+              <option name="model" value="deepseek/deepseek-v4.1-flash[1m]" />
               <option name="permissionMode" value="bypassPermissions" />
               <option name="reasoningEffort" value="medium" />
             </TabSessionState>

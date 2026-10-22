@@ -83,7 +83,7 @@ function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
 // 卡券枚举文案（卡券列表和卡片选择器都会用）
 const CARD_SECOND_TYPE_LABEL = {
-  0: '-', 101: '宠物背景', 102: '宠物颜色', 103: '宠物套装', 104: '宠物相框',
+  0: '-', 101: '宠物背景', 102: '宠物颜色', 103: '宠物套装', 104: '宠物相框', 201: '卡牌游戏',
 };
 
 window.App = { post, toast, esc, validateJson, openModal, closeModal, CARD_SECOND_TYPE_LABEL };

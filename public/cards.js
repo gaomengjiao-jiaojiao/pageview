@@ -23,7 +23,7 @@ const COS_API = {
 };
 const APP_CONFIG = window.__APP_CONFIG__ || {};
 
-const FIRST_TYPE_LABEL = { 0: '-', 1: '宠物装扮' };
+const FIRST_TYPE_LABEL = { 0: '-', 1: '宠物装扮', 2: '卡牌游戏' };
 const STATUS_LABEL = { 0: '-', 1: '启用', 2: '禁用' };
 
 // 更新图片预览
